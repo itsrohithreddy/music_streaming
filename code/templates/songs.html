@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Music</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='songs.css') }}">
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"/>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css"/>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css"/>
+    
+</head>
+
+    <body style="padding-bottom: 75px;padding-top: 85px;">
+        <nav class="navbar navbar-light bg-dark justify-content-between px-3 py-2 fixed-top">
+            <a class="navbar-brand" onclick="openNav()" style="cursor: pointer; color: white"><i class="fa-solid fa-bars fa-fade fa-xl" style="color: #ffffff;" height="100px" ></i></a>
+            <div style="position:absolute;top:10px;left:80px">
+                <a class="navbar-brand" style="cursor: pointer;" onclick="openNav()"><i class="fa-solid fa-user fa-fade" style="color: #ffffff;"></i><span style="color: #ffffff;" id="username-dispaly"> {{ nav_username }}</span></a>
+            </div>
+            <h4 class="nav-heading" style="color:white;cursor:pointer;position: absolute;left:700px" onclick="openNav()"><strong>{{ name }}</strong></h4>
+        </nav>
+        <div id="mySidenav" class="sidenav">
+            <a href="javascript:void(0)" class="closebtn" onclick="closeNav()" style="position:absolute;top:35px">&times;</a>
+            <a href="/">Home</a>
+            <a href="/create">Create</a>
+        </div>
+
+
+        <main id="main-content">
+        <div class="container">
+            <!-- All Rows -->
+            {% for song in songs %}
+                <div class="card">
+                    <div class="container playlist-content">
+                        <!-- <img src="https://via.placeholder.com/300" alt="Card Image"> -->
+                        <img  src="data:image/png;base64,{{ song.album.album_image|decodeutf8 }}" id="image-{{ song.song_name }}" alt="{{ song.song_name }} Image" class="card-img-top" height="220px">
+                        <div class="onImage-buttons" style="display: none;">
+                            <button class="like-button" ><i class="like-icon" data-song_id="{{ song.song_id }}" onclick="toggleLike(this)"></i></button>
+                            <!-- <button class="play-button" onclick="playsong(this)">Play</button> -->
+                            <button class="play-button"><i class="fa-solid fa-play fa-xl" onclick="playsong(this)"><span class="d-none">{{ song.song_name }}</span></i></button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>{{ song.song_name }}</strong></p>
+                        
+                        {% if data == 0 %}
+                            <div class="playlist-button" style="position: absolute;bottom:0px;">
+                                <!-- <button class="btn btn-outline-success my-2 my-sm-0 openModalBtn" onclick="modalFunction()"><a href="#" style="color: crimson;"><strong>Add to Playlist</strong></a></button> -->
+                                <span>Add to Playlist : </span>
+                                <input type="submit" class="btn btn-outline-success my-2 my-sm-0 openModalBtn" onclick="modalFunction(this)" value="{{ song.song_name }}">
+                            </div>
+                            <div class="playlist-button">
+                                <span>Rate this song : </span>
+                                <input type="submit" class="btn btn-outline-success my-2 my-sm-0 openModalBtn" value="{{ song.song_name }}" onclick="modalFunctionRate(this)">
+                            </div>
+                        {% else %}
+                        <div class="playlist-button" >
+                            <!-- <button class="btn btn-outline-success my-2 my-sm-0 openModalBtn" onclick="modalFunction()"><a href="#" style="color: crimson;"><strong>Add to Playlist</strong></a></button> -->
+                            <span>Delete from Playlist : </span>
+                            <input type="submit" class="btn btn-outline-success my-2 my-sm-0 openModalBtn" onclick="modalFunctionDelete(this)" value="{{ song.song_name }}">
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+            
+        
+
+            
+
+
+        <!-- In Albums page to add to playlist -->
+        <div id="myModal_add-button" class="modal" style="position:fixed;top:15%;left:30%;width: 50%;height : 70%;max-width:500px;">
+            <div class="modal-content" style="width: 100%">
+              <span class="close" onclick="closeModal()">&times;</span>
+              <h3>Add to existing playlist</h3>
+              <div class="container mt-5">
+                <form class="form" method="post" action="/playlist_songs/">
+                    <div class="mb-3">
+                        
+                            <div class="mb-3">
+                                <label for="song_name-p" class="form-label">Song Name</label>
+                                <input type="text" class="form-control" id="song_name-p" name="song_name-p" value="" readonly>
+                            </div>
+                            <label for="checkbox-div" class="form-label">Select Playlist</label>
+                        {% for user_playlist in user_playlists %}
+                            <div class="form-check" id="checkbox-div">
+                                <input class="form-check-input" type="checkbox" name="playlist_name" id='{{ user_playlist.playlist_name }}' value='{{ user_playlist.playlist_name }}'>
+                                <label class="form-check-label" for='{{ user_playlist.playlist_name }}'>{{ user_playlist.playlist_name }}</label>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+              </div>
+              <h4>-------------------OR-------------------</h4>
+              <h3>Create new playlist and add to that</h3>
+              <div class="container mt-5">
+                <form class="form" method="post" action="/playlist_create" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label class="form-label">Create PlayList</label>
+                        <div class="mb-3">
+                            <label for="song_name-a" class="form-label">Song Name</label>
+                            <input type="text" class="form-control" id="song_name-a" name="song_name-a" value="" readonly>
+                        </div>
+                        <div>
+                            <label for="playlist_name" class="form-label">Playlist Name</label>
+                            <input type="text" class="form-control" id="playlist_name" name="playlist_name" placeholder="Enter playlist name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="playlistImage" lass="form-label">Select Playlist Image : (accepted : .png)</label>
+                            <input type="file" class="form-control" id="playlistImage" name="playlistImage" accept=".png">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+               </div>
+            </div>
+        </div>
+        
+
+
+        <!-- For deleting a song from playlist in playlist page -->
+        <div id="myModal_delete-button" class="modal" style="position:fixed;top:15%;left:30%;width: 50%;height : 70%;max-width:500px;">
+            <div class="modal-content" style="width: 100%">
+              <span class="close" onclick="closeModal()">&times;</span>
+              <h3>Delete song from playlist</h3>
+              <div class="container mt-5">
+                <form class="form" method="post" action="/deleteSong">
+                    <div class="mb-3">
+                        <div class="mb-3">
+                            <label for="song_name-d" class="form-label">Song Name</label>
+                            <input type="text" class="form-control" id="song_name-d" name="song_name-d" value="" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label for="playlist_name" class="form-label">Playlist Name</label>
+                            <input type="text" class="form-control" id="playlist_name" name="playlist_name" value='{{ name }}' readonly>
+                        </div>
+                        <div class="mb-3">
+                            <h4 style="color:crimson">Are you sure you want to delete the above specified song ??</h4>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Delete</button>
+                </form>
+              </div>
+            </div>
+        </div>
+
+
+        <!-- To rate a song present in album -->
+        <div id="myModal_rate-button" class="modal" style="position:fixed;top:15%;left:30%;width: 50%;height : 70%;max-width:500px;">
+            <div class="modal-content" style="width: 100%">
+              <span class="close" onclick="closeModal()">&times;</span>
+              <h3> song from playlist</h3>
+              <div class="container mt-5">
+                <form class="form" method="post" action="/user_rateSong">
+                    <div class="mb-3">
+                        <div class="mb-3">
+                            <label for="song_name-r" class="form-label">Song Name</label>
+                            <input type="text" class="form-control" id="song_name-r" name="song_name-r" value="" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label for="album_name-r" class="form-label">Album Name</label>
+                            <input type="text" class="form-control" id="album_name-r" name="album_name-r" value="{{ name }}" readonly>
+                        </div>
+                        <div class="mb-3">
+                            
+                            <label for="ratingValue" class="form-label">Rating </label><br>
+                            <span style="color:crimson">Provide a rating value from 0 to 5</span>
+                            <input type="number" min="0" max="5" step="0.1" class="form-control" id="ratingValue" name="ratingValue" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+              </div>
+            </div>
+        </div>
+        </main>
+
+        <!-- Music Playing bar HTML -->
+        <nav class="navbar fixed-bottom navbar-light bg-light p-0">
+            <div class="col-12"> 
+              <div class="slider" id="myRange" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                <div class="progress bg-success progress-bar-striped progress-bar-animated" id="progressBar"></div>
+              </div>
+            </div>
+            <div class="container-fluid  p-3 py-2 ">
+              <div class="col-1">
+
+
+                <img src="" class="img" alt="cover up image" style="width: 45%;">
+
+
+              </div>
+              <div class="col-2" style="margin-left: -3%;">
+                <div style="font-size: x-small;">
+                  <h6 class="song_name"></h6>
+
+                </div>
+                <div style="font-size: x-small;" class="creator_name">
+                  
+                </div>
+              </div>
+              <div class="mx-auto">
+                <i class="fa-solid fa-repeat ps-2 mx-1"></i>
+                <i class="fa-solid fa-backward-fast px-2"></i>
+                <i class="fa-solid fa-play px-2" id="masterPlay"></i>
+                <!-- <i class="fa-solid fa-pause"></i> -->
+                <i class="fa-solid fa-forward-fast px-2"></i>
+                <!-- <i class="fa-solid fa-shuffle px-2"></i> -->
+              </div>
+              <div class="col-1 ms-auto">
+                <i class="fa-solid fa-ellipsis px-2 ms-2"></i>
+                <i class="fa-solid fa-volume-high px-2"></i>
+                <i class="fa-solid fa-up-right-and-down-left-from-center ps-2" onclick="toggleCollapse()"></i>
+                <div class="container mt-4">
+                
+                  <div class="collapsible collapsed" id="collapseExample">
+                    <div class="row">
+                        <div class="col-6 container">
+
+
+                            <img src="" class="pt-5 mt-5 px-5 mx-5 img">
+
+
+
+                            <div class="px-5 mx-5 pt-2 mt-2 h5 song_name" >
+                              
+                            </div>
+                            <div class="px-5 mx-5 py-2 my-2 creator_name">
+                              
+                            </div>
+                        </div>
+                        <div class="col-6 container">
+                            <div class="container border rounded h3 p-5 text-center">
+                              Lyrics
+                              <div class="container border rounded h6 text-center">
+                                <div class="scrollable-container">
+                                  <div class="scrollable-content">
+                                    <pre id="lyrics">
+            
+                                    </pre>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                        </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+        </nav>
+
+
+        <footer class="bg-dark text-light text-center py-3">
+            <div class="container-fluid">
+              <p>&copy; 2023 | Music Streaming</p>
+            </div>
+        </footer>
+
+
+
+
+        <!-- for corousal bootstrap keep this here only -->
+        <!-- These below 2 scripts should be placed first -->
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
+
+
+
+        <script>
+            $(document).ready(function () {
+                like_icons=document.querySelectorAll(".like-icon")
+                for(const like_icon of like_icons){
+                    // like_icon.classList.add("")
+                    let song_id=like_icon.dataset.song_id;
+                    fetch("/user_liked_songs/"+song_id).then(
+                            response => {
+                                // console.log("Full Response : ",response);
+                                // console.log("Status code : ",response,response.status);
+                                // console.log("Content-Type:", response.headers.get('Content-Type'));
+                                
+                                // response.json();
+                                return response.text();
+                                
+                            }
+                    )
+                    .then(responseText => {
+                        // console.log("Response Text:", responseText);
+                        const data = JSON.parse(responseText);
+
+                        // Continue with the rest of your code
+                        // console.log(data);
+
+                        if(data.check==1){
+                            like_icon.classList.add("fa-solid","fa-heart","fa-shake","fa-xl");
+
+                        }
+                        else{
+                            like_icon.classList.add("fa-regular","fa-heart","fa-shake","fa-xl");
+                        }
+                    })
+                    .catch(err => {
+                        console.log("Error fetching data : ",err);
+                    });
+                }
+            })
+        </script>
+
+        <script>
+            //like icon toggling
+            function toggleLike(ele) {
+                // console.log(ele.classList)
+                if(ele.classList.contains('fa-regular')){
+                    //alert("Thank you for liking the song . ")
+                    let song_id=ele.dataset.song_id;
+                    let check="1";
+                    fetch("/song_like/"+song_id+"/"+check).then(
+                        response => {
+                            // console.log("Full Response : ",response)
+                            // console.log("Status code : ",response,response.status)
+                        }
+                    )
+                    .then(
+                        alert("Thank you for liking the song . Song added to your liked list . ")
+                    ).catch(
+                        err => console.log(err)
+                    )
+                    ele.classList.replace('fa-regular', 'fa-solid');
+                }
+                else{
+                    let song_id=ele.dataset.song_id;
+                    let check="0";
+                    alert("If you are sure to dislike the song , click ok ")
+                    fetch("/song_like/"+song_id+"/"+check).then(
+                        response => {
+                            // console.log("Full Response nnn: ",response)
+                            // console.log("Status code  nnnn: ",response,response.status)
+                        }
+                    )
+                    .then(
+                        alert("Song removed from your liked list . ")
+                    ).catch(
+                        err => console.log("Error is :",err)
+                    )
+                    ele.classList.replace('fa-solid', 'fa-regular'); 
+                }
+            }
+
+            
+
+
+
+            // Related to Modal for add to playlist button
+            function modalFunction(ele){
+                document.getElementById('myModal_add-button').style.display = 'block';
+                document.getElementById('song_name-p').value=ele.value;
+                document.getElementById('song_name-a').value=ele.value;
+            }
+            //Related to Modal for delete from playlist
+            function modalFunctionDelete(ele){
+                document.getElementById('myModal_delete-button').style.display = 'block';
+                document.getElementById('song_name-d').value=ele.value;
+            }
+            function modalFunctionRate(ele){
+                document.getElementById('myModal_rate-button').style.display = 'block';
+                document.getElementById('song_name-r').value=ele.value;
+            }
+
+            // Function to close the modal
+            function closeModal() {
+                myModal=document.getElementById("myModal_add-button")
+                myModal1=document.getElementById("myModal_delete-button")
+                myModal2=document.getElementById("myModal_rate-button")
+                myModal.style.display = 'none';
+                myModal1.style.display = 'none';
+                myModal2.style.display = 'none';
+            }
+
+
+
+            function openNav() {
+                document.getElementById("mySidenav").style.width = "250px";
+                document.getElementById("main-content").style.marginLeft = "250px";
+                document.getElementById("main-content").style.width = "calc(100% - 250px)";
+                document.body.style.overflowX = "hidden";
+                document.body.style.backgroundColor = "rgba(0,0,0,0.4)";
+            }
+
+            function closeNav() {
+                document.getElementById("mySidenav").style.width = "0";
+                document.getElementById("main-content").style.margin = "auto";
+                document.getElementById("main-content").style.width = "100%";
+                document.body.style.overflowX = "auto";
+                document.body.style.backgroundColor = "white";
+            }
+        </script>
+
+
+        <!-- Related to Music bar -->
+        <script>
+            const slider = document.getElementById('myRange');
+            const progressBar = document.getElementById('progressBar');
+            let isDown = false;
+            let audio = new Audio("data:audio/wav;base64,");
+            let masterPlay = document.getElementById("masterPlay");
+            let song_name = document.getElementsByClassName('song_name');
+            let song_creator = document.getElementsByClassName('creator_name');
+            let img = document.getElementsByClassName('img');
+            let lyrics = document.getElementById('lyrics');
+
+            function playsong(element){
+            var xhttp = new XMLHttpRequest();
+            // A new instance of the `XMLHttpRequest` object is created. This object is used to make asynchronous HTTP requests.
+            var queue = "";
+            masterPlay.classList.replace('fa-pause','fa-play');
+
+            // An event listener is set up to listen for changes in the `readyState` of the XMLHttpRequest. 
+            // When the `readyState` is `4` (request completed), and the status is 200 (OK), the function 
+            // inside the event listener will be executed.
+
+            xhttp.onreadystatechange = function(){
+                if(this.readyState == 4 &&  this.status == 200){
+                    queue = JSON.parse(this.responseText);
+                    audio.src = ("data:audio/mp3;base64," + queue['song_file']);
+                    delete queue['song_file'];
+                    console.log(queue)
+                    audio.currentTime = 0;
+                    audio.play();
+                    masterPlay.classList.replace('fa-play','fa-pause');
+                    setdata_in_nav(queue);
+                }
+            }
+
+            // The readyState property in the context of XMLHttpRequest represents the state of the request. 
+            // The XMLHttpRequest object goes through different states as it progresses through the process of 
+            // sending a request and receiving a response. The possible readyState values are defined by the 
+            // XMLHttpRequest specification:
+
+            // 0 (UNSENT): The `XMLHttpRequest` object has been created, but the `open()` method has not been 
+            // called yet.
+
+            // 1 (OPENED): The `open()` method has been called. During this state, you can set the request 
+            // headers using the `setRequestHeader()` method.
+
+            // 2 (HEADERS_RECEIVED): The `send()` method has been called, and the headers and status are available.
+            //  This is the point at which you can access the response headers using the `getAllResponseHeaders()` method.
+
+            // 3 (LOADING): The response is being received. You can listen for progress events to track the progress 
+            // of the response as it is downloaded.
+
+            // 4 (DONE): The operation is complete. This is the final state, and you can now access the complete
+            //  response using properties such as responseText or responseXML.
+
+            console.log(element.nodeValue)
+            let request = '/add_song_queue/'+(element.childNodes[0].childNodes[0].nodeValue);
+
+            // The open() method in the XMLHttpRequest object initializes a request. 
+            // It specifies the type of request (GET, POST, etc.) and the URL to send the request to. 
+            // The open() method does not send the request; it only sets up the configuration for the request. 
+            // After calling open(), you typically call the send() method to actually send the request.
+            
+            // Here's the basic syntax of the open() method:
+            // xmlhttp.open(method, url, async, user, password);
+
+            // method: The HTTP method to use for the request (e.g., "GET", "POST", "PUT", "DELETE").
+            // url: The URL to send the request to.
+            // async: Optional. A boolean value indicating whether the request should be asynchronous (default is true). If set to false, the send() method will not return until the request is complete.
+            // user: Optional. A username for authentication purposes (if required by the server).
+            // password: Optional. A password for authentication purposes (if required by the server).
+
+
+            // The async parameter in the open() method of the XMLHttpRequest object determines whether the 
+            // request should be asynchronous or synchronous. Here's a detailed explanation :
+            // When the async parameter is set to true (which is the default), it indicates that the request should be asynchronous.
+            // An asynchronous request means that the script will not be blocked while waiting for the request to complete. 
+            // The send() method will return immediately after the request is initiated.
+            // The script continues to execute, and the browser will dispatch events (such as the onreadystatechange event) when different phases of the request are completed.
+                // Since the script doesn't wait for the request to complete, it can continue with other tasks or respond to user interactions while the XMLHttpRequest is in progress.
+                // The browser will dispatch events at different stages of the XMLHttpRequest lifecycle. The onreadystatechange event is one such event that is triggered when the readyState property of the XMLHttpRequest changes.
+                // The readyState goes through various states (0 to 4), indicating different phases of the request. Events can be set up to handle each of these states using the onreadystatechange event handler.
+            // You typically use asynchronous requests to avoid blocking the user interface (UI) and to allow the page to remain responsive while waiting for the server's response .
+
+            // When the async parameter is set to false, it indicates that the request should be synchronous.
+            // A synchronous request means that the send() method will not return until the request is complete. 
+            // The script is effectively paused until the server responds.
+            // Synchronous requests are generally discouraged because they can lead to a poor user experience, 
+            // causing the webpage to become unresponsive while waiting for the server's response.
+            // Modern web development practices favor asynchronous requests to ensure a more responsive and interactive user interface.
+            
+            xhttp.open('GET',request,true);
+            xhttp.send(); 
+            
+            }
+
+            const setdata_in_nav = (queue)=>{
+                for (const iterator of song_name) {      //this <song_name> variable is declared up in script .
+                    iterator.innerHTML = queue['song_name'];      //This song_name in square brackets is from app.py
+                }
+                for (const iterator of song_creator) {  //this <song_creator> variable is declared up in script . 
+                    iterator.innerHTML = queue['creator_username']; //This creator_username in square brackets is from app.py 
+                }
+                lyrics.innerHTML = queue['lyrics'];   //This lyrics in square brackets is from app.py   and <lyrics> at the beginning is declared up in script . 
+                for(const iterator of img){
+                    iterator.src=queue['image'];
+                }
+            }
+
+            slider.addEventListener('mousedown', (e) => {
+                isDown = true;
+                updateProgressBar(e);
+            });
+
+            slider.addEventListener('mouseup', () => {
+                isDown = false;
+            });
+
+            slider.addEventListener('mousemove', (e) => {
+            if (isDown) {
+                updateProgressBar(e);
+            }
+            });
+
+            function updateProgressBar(event) {
+            const sliderRect = slider.getBoundingClientRect();
+            const percentage = (event.clientX - sliderRect.left) / slider.offsetWidth * 100;
+            const clampedPercentage = Math.min(100, Math.max(0, percentage+1));
+            progressBar.style.width = `${clampedPercentage}%`;
+            audio.currentTime = clampedPercentage*audio.duration/100;
+            }
+
+            masterPlay.addEventListener("click",()=>{
+            if(audio.paused || audio.currentTime<=0){
+                audio.play();
+                masterPlay.classList.replace('fa-play','fa-pause');
+            }
+            else{
+                audio.pause();
+                masterPlay.classList.replace('fa-pause','fa-play');
+            }
+            })
+            audio.addEventListener("timeupdate",()=>{
+            let progressValue = parseInt((audio.currentTime/audio.duration)*100);
+            progressBar.style.width = `${progressValue}%`;
+            console.log(progressValue);
+            });
+
+            function toggleCollapse() {
+            var collapsible = document.getElementById('collapseExample');
+                collapsible.classList.toggle('collapsed');
+            }
+
+        </script>
+
+
+        
+      
+
+        
+        <!-- for bootstrap -->
+        <script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"
+        ></script>
+          
+      
+      
+        <!-- for fontawesome -->
+        <script src="https://kit.fontawesome.com/d060c4db93.js" crossorigin="anonymous"></script>
+        
+    </body>
+</html>

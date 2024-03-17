@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music</title>
+    
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='create.css') }}">
+
+    <!-- Below for Bootstarp5.3.2 -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"
+    />
+
+    <!-- Everyrthing below for bootstrap corousal -->
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css"
+    />
+    
+
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
+
+
+</head>
+<body style="padding-top: 20px;">
+        <nav class="navbar navbar-light bg-dark justify-content-between px-3 py-2 fixed-top">
+          <a class="navbar-brand" onclick="openNav()" style="cursor: pointer; color: white"><i class="fa-solid fa-bars fa-fade fa-xl" style="color: #ffffff;" height="100px" ></i></a>
+          <div style="position:absolute;top:10px;left:80px">
+            <a class="navbar-brand" style="cursor: pointer;" onclick="openNav()"><i class="fa-solid fa-user fa-fade" style="color: #ffffff;"></i><span style="color: #ffffff;" id="username"> {{ nav_username }}</span></a>
+          </div>
+          <h4 class="nav-heading" style="color:white;cursor:pointer;position: absolute;left:700px" onclick="openNav()"><strong>Create</strong></h4>
+        </nav>
+        <div id="mySidenav" class="sidenav">
+          <a href="javascript:void(0)" class="closebtn" onclick="closeNav()" style="position:absolute;top:35px">&times;</a>
+          <a href="/">Home</a>
+          <a href="/logout">Logout</a>
+        </div>
+
+
+
+        <main class="my-5" id="main-content">
+          <div class="container text-center contributions"><h1>Dashboard</h1></div>
+          <div class="row my-5 mx-5">
+            <div class="col-12 col-md-6">
+              <div class="container px-5 py-2" style="background-color: #f1f1f1;border-radius: 10%;width:250px;height:200px"><div class="text-center"><h3>Songs Contribution</h3></div>
+              <div class="text-center"><h4>- {{ user_song_count }} -</h4></div></div>
+              
+            </div>
+            
+            <div class="col-12 col-md-6" >
+              <div class="container px-5 py-2" style="background-color: #f1f1f1;border-radius: 10%;width:250px;height:200px"><div class="text-center"><h3>Albums Contribution</h3></div>
+              <div class="text-center"><h4>- {{ user_album_count }} -</h4></div></div>
+              
+            </div>
+          </div>
+          
+          <div class="container">
+            <h2  style="color:black;text-align: center;">Your Contributions</h2>
+            <div class="buttons" style="position: absolute;right:200px;">
+              <!-- <button class="upload-button" style="background-color: rgb(47, 20, 220);height: px;width: 40px;border-radius: 10%"><a href="#"></a></button> -->
+              <!-- <a href="#" class="btn btn-primary btn-lg" role="button" data-bs-toggle="button" aria-pressed="true">Contribute more</a> -->
+              <button class="btn btn-lg btn-outline-success my-2 my-sm-0" type="submit" onclick="modalFunctionUpload()"><strong>Upload Music</strong></button>
+            </div>
+            {% for album in albums %}
+              <div class="hero-section">
+                <div class="hero-title" >
+                  <h3 style="color:black;text-align: center;">{{ album.album_name }}</h3>
+                </div>
+                <div class="scrollable-rows">
+                  <!-- Example of three rows, you can add more as needed -->
+                  <div class="container">
+                    {% for  song in album.songs_in %}
+                      <div class="row row-content">
+                        <div class="col">
+                          <div class="card" style="height:130px">
+                            <div class="card-body">
+                              <h5 class="card-title">{{song.song_name}}</h5>
+                              <p class="card-text"><strong><span class="likes" data-song_id="{{ song.song_id }}"></span> | <span class="views">Views : {{ song.song_views }}</span> | <span class="avg-rating" data-song_id="{{ song.song_id }}" ></span></strong></p>
+                              <div class="card-buttons" style="position: absolute;right:50px;">
+                                <span>Edit song : </span>
+                                <!-- <input type="submit" data-song_id=" {{ song.song_id }}" data-song_name=" {{ song.song_name }}" data-album_name="{{ album.album_name }}" data-lyrics="{{ song.song_lyrics }}" data-duration="{{ song.duration }}" data-genre="{{ song.genre }}" class="btn btn-outline-success my-2 my-sm-0 openModalBtn" onclick="modalFunctionEdit(this,'{{ album.album_name}}')" value="{{ song.song_name }}"> -->
+                                <input type="submit" data-song_id="{{ song.song_id }}" data-song_name=" {{ song.song_name }}" data-album_name="{{ album.album_name }}" data-lyrics="{{ song.song_lyrics }}" data-duration="{{ song.duration }}" data-genre="{{ song.genre }}" class="btn btn-outline-success my-2 my-sm-0 openModalBtn" onclick="modalFunctionEdit(this)" value="{{ song.song_name }}">
+                                <span> Delete Song : </span>
+                                <input type="submit" class="btn btn-outline-success my-2 my-sm-0 openModalBtn" onclick="modalFunctionDelete(this)" value="{{ song.song_name }}">
+                                <!-- <button class="btn btn-outline-success my-2 my-sm-0" type="submit"><a href="#" style="color: crimson;"><strong>Edit</strong></a></button>
+                                <button class="btn btn-outline-success my-2 my-sm-0" type="submit"><a href="#" style="color: crimson;"><strong>Delete</strong></a></button> -->
+                              </div>
+
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    {% endfor %}
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+
+
+
+          <!-- Modal for upload -->
+          <div id="myModal_upload-button" class="modal" style="position:fixed;top:15%;left:30%;width: 70%;height : 80%;max-width:500px;">
+            <div class="modal-content" style="width: 100%">
+              <span class="close" onclick="closeModal()">&times;</span>
+              <h3>Upload Music</h3>
+              <div class="container mt-5">
+                <form class="form" method="post" action="/creator_upload" enctype="multipart/form-data">
+                    <div class="mb-3">
+                          <div class="mb-3">
+                            <label for="songName" lass="form-label">Song Name : </label>
+                            <input type="text" class="form-control" id="songName" name="songName" required placeholder="Enter song name">
+                          </div>
+                          <div class="mb-3">
+                            <label for="userName" class="form-label">Creator Username : </label>
+                            <input type="text" class="form-control" id="userName" name="userName" value='{{ nav_username }}' readonly>
+                          </div>
+                          <div class="mb-3">
+                            <label for="lyrics" class="form-label">Lyrics : </label>
+                            <textarea class="form-control" id="lyrics" name="lyrics" rows="8" cols="25" required placeholder="Please paste the lyrics here"></textarea>
+                          </div>
+                          <div class="mb-3">
+                            <label for="genre" lass="form-label">Genre : </label>
+                            <input type="text" class="form-control" id="genre" name="genre" required placeholder="Enter genre"></textarea>
+                          </div>
+                          <div class="mb-3">
+                            <label for="duration" lass="form-label">Duration : </label>
+                            <input type="number" class="form-control" id="duration" name="duration" required placeholder="Enter duration in milliseconds"></textarea>
+                          </div>
+                          <div class="mb-3">
+                            <label for="albumName" lass="form-label">Album Name : </label>
+                            <input type="text" class="form-control" id="albumName" name="albumName" required placeholder="Enter existing or new album name">
+                          </div>
+                          <div class="mb-3">
+                            <span style="color: crimson;">If you are creating a new album and adding song into it you may select an image for the album </span>
+                            <span style="color: crimson;">If you are adding song to alreay created album leave this field empty </span>
+                            <label for="albumImage" lass="form-label">Select Album Image : (accepted : .png)</label>
+                            <input type="file" class="form-control" id="albumImage" name="albumImage" accept=".png">
+                          </div>
+                          <div class="mb-3">
+                            <label for="songFile" lass="form-label">Select Music File : </label>
+                            <input type="file" class="form-control" id="songFile" name="songFile" accept=".mp3" required>
+                          </div>
+                          <!-- <div class="mb-3">
+                            <label for="songImage" lass="form-label">Select Song Image : (accepted : .png)</label>
+                            <input type="file" class="form-control" id="songImage" name="songImage" accept=".png">
+                          </div> -->
+                          <div class="mb-3">
+                            <button class="btn btn-success mx-auto" type="submit" value="Upload">Upload</button>
+                          </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+
+
+            <!-- Modal for Song Deletion from album -->
+          <div id="myModal_delete-button" class="modal" style="position:fixed;top:15%;left:30%;width: 70%;height : 80%;max-width:500px;">
+              <div class="modal-content" style="width: 100%">
+                <span class="close" onclick="closeModal()">&times;</span>
+                <h3>Delete from Album</h3>
+                <div class="container mt-5">
+                  <form class="form" method="post" action="/creator_song_delete">
+                      <div class="mb-3">
+                            <div class="mb-3">
+                              <label for="songName-d" lass="form-label">Song Name : </label>
+                              <input type="text" class="form-control" id="songName-d" name="songName-d" value="" readonly>
+                            </div>
+                            <div class="mb-3">
+                              <h4 style="color:crimson">Are you sure you want to delete the above specified song ?? Then click below</h4>
+                            </div>
+                        </div>
+                      <button type="submit" class="btn btn-primary">Delete</button>
+                  </form>
+                </div>
+              </div>
+          </div>
+
+
+
+          <!-- Modal for edit song in the album -->
+          <div id="myModal_edit-button" class="modal" style="position:fixed;top:15%;left:30%;width: 70%;height : 80%;max-width:500px;">
+            <div class="modal-content" style="width: 100%">
+              <span class="close" onclick="closeModal()">&times;</span>
+              <h3>Edit Song</h3>
+              <div class="container mt-5">
+                <form class="form" id="editForm" method="post" action="" enctype="multipart/form-data">
+                    <div class="mb-3">
+                      <div class="mb-3">
+                        <h4 style="color:crimson">Please specify the new value in feilds which you want to edit . Leave the other feilds as they are </h4>
+                      </div>
+                          <div class="mb-3">
+                            <label for="songName-e" lass="form-label">Song Name : </label>
+                            <input type="text" class="form-control" id="songName-e" name="songName-e" value="">
+                          </div>
+                          <div class="mb-3">
+                            <label for="albumName-e" lass="form-label">Album Name : </label>
+                            <input type="text" class="form-control" id="albumName-e" name="albumName-e" value="" readonly>
+                          </div>
+                          <div class="mb-3">
+                            <label for="userName-e" class="form-label">Creator Username : </label>
+                            <input type="text" class="form-control" id="userName-e" name="userName-e" value='{{ nav_username }}' readonly>
+                          </div>
+                          <div class="mb-3">
+                            <label for="lyrics-e" class="form-label">Lyrics : </label>
+                            <!-- <input type="text" id="artist" name="artist" required placeholder="please paste the lyrics here"> -->
+                            <textarea class="form-control" id="lyrics-e" name="lyrics-e" rows="8" cols="25" required></textarea>
+                          </div>
+                          <div class="mb-3">
+                            <label for="genre-e" lass="form-label">Genre : </label>
+                            <input type="text" class="form-control" id="genre-e" name="genre-e" value="" required>
+                          </div>
+                          <div class="mb-3">
+                            <label for="duration-e" lass="form-label">Duration(in milliseconds) : </label>
+                            <input type="number" class="form-control" id="duration-e" name="duration-e" value="" required>
+                          </div>
+                          <div class="mb-3">
+                            <label for="songFile-e" lass="form-label">Select Music File (leave this feild empty if you do not want to edit the audio file)  :  </label>
+                            <input type="file" class="form-control" id="songFile-e" name="songFile-e" accept=".mp3">
+                          </div>
+                          <!-- <div class="mb-3">
+                            <label for="songImage" lass="form-label">Select Song Image : (accepted : .png)</label>
+                            <input type="file" class="form-control" id="songImage" name="songImage" accept=".png">
+                          </div> -->
+                          <div class="mb-3">
+                            <h4 style="color:crimson">Are you sure you want to edit the details of the song as specified above ?? Then click below</h4>
+                          </div>
+                      </div>
+                    <button type="submit" class="btn btn-primary">Edit</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </main>
+
+
+
+        <footer class="bg-dark text-light text-center py-3">
+          <div class="container">
+            <p>&copy; 2023 | Music Streaming</p>
+          </div>
+        </footer>
+
+
+
+
+        <script>
+          $(document).ready(function () {
+              likes_span=document.querySelectorAll(".likes")
+              for(const likes of likes_span){
+                  // like_icon.classList.add("")
+                  let song_id=likes.dataset.song_id;
+                  fetch("/song_likes_count/"+song_id).then(
+                          response => {
+                              // console.log("Full Response : ",response);
+                              // console.log("Status code : ",response.status);
+                              // console.log("Content-Type:", response.headers.get('Content-Type'));
+                              
+                              return response.json();
+                              //return response.text();
+                          }
+                  )
+                  .then(data => {
+                      // console.log("Response Text:", responseText);
+                      // const data = JSON.parse(responseText);
+
+                      // Continue with the rest of your code
+                      // console.log(data);
+                      likes.innerHTML="Likes : "+data["count"];
+                  })
+                  .catch(err => {
+                      console.log("Error fetching data : ",err);
+                  });
+              }
+          })
+          
+          $(document).ready(function () {
+              avgRating_span=document.querySelectorAll(".avg-rating")
+              for(const rating of avgRating_span){
+                  // like_icon.classList.add("")
+                  let song_id=rating.dataset.song_id;
+                  fetch("/song_avg_rating/"+song_id).then(
+                          response => {
+                              // console.log("Full Response : ",response);
+                              // console.log("Status code : ",response.status);
+                              // console.log("Content-Type:", response.headers.get('Content-Type'));
+                              
+                              return response.json();
+                              //return response.text();
+                          }
+                  )
+                  .then(data => {
+                      // console.log("Response Text:", responseText);
+                      // const data = JSON.parse(responseText);
+
+                      // Continue with the rest of your code
+                      // console.log(data);
+                      rating.innerHTML="Average Rating : "+data["rating"];
+                  })
+                  .catch(err => {
+                      console.log("Error fetching data : ",err);
+                  });
+              }
+          })
+      </script>
+    <script>
+      function openNav() {
+        document.getElementById("mySidenav").style.width = "250px";
+        document.getElementById("main-content").style.marginLeft = "250px";
+        document.getElementById("main-content").style.width = "calc(100% - 250px)";
+        document.body.style.overflowX = "hidden";
+        document.body.style.backgroundColor = "rgba(0,0,0,0.4)";
+      }
+
+      function closeNav() {
+        document.getElementById("mySidenav").style.width = "0";
+        document.getElementById("main-content").style.marginLeft = "0";
+        document.getElementById("main-content").style.width = "100%";
+        document.body.style.overflowX = "auto";
+        document.body.style.backgroundColor = "white";
+      }
+    </script>
+    <script>
+      function modalFunctionUpload(){
+        document.getElementById('myModal_upload-button').style.display = 'block';
+        
+      }
+
+      function modalFunctionDelete(ele){
+        document.getElementById('myModal_delete-button').style.display = 'block';
+        document.getElementById('songName-d').value=ele.value;     
+      }
+
+      function modalFunctionEdit(ele){
+        document.getElementById('myModal_edit-button').style.display = 'block';
+        var form = document.getElementById('editForm')
+        form.action = "/creator_song_edit/"+ele.dataset.song_id;
+        document.getElementById('songName-e').value=ele.dataset.song_name;
+        // console.log(ele.dataset.lyrics,ele.dataset.genre,ele.dataset.duration);
+        // document.getElementById('userName-e').value=ele.dataset.;   ---> This is not required as its value is already given in the input tag
+        document.getElementById('albumName-e').value=ele.dataset.album_name;
+        document.getElementById('lyrics-e').innerHTML=ele.dataset.lyrics;
+        document.getElementById('genre-e').value=ele.dataset.genre;
+        document.getElementById('duration-e').value=ele.dataset.duration;
+      }
+
+      function closeModal() {
+        myModal=document.getElementById("myModal_upload-button")
+        myModal.style.display = 'none';
+        myModal1=document.getElementById("myModal_delete-button")
+        myModal1.style.display = 'none';
+        myModal2=document.getElementById("myModal_edit-button")
+        myModal2.style.display = 'none';
+      }
+    </script>
+
+    <!-- fontawesome -->
+    <script src="https://kit.fontawesome.com/d060c4db93.js" crossorigin="anonymous"></script>
+
+
+    <!-- bootstrap 5.3.2 -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+      crossorigin="anonymous"
+    ></script>
+    <!-- For hero in create page  -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script> -->
+
+
+</body>
+</html>

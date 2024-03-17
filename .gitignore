@@ -1,0 +1,4 @@
+myvenv/
+*.log
+*.pdf
+code/music.db

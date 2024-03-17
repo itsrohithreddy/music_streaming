@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music</title>
+
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='signin.css') }}">
+
+    <!-- Below for Bootstarp5.3.2 -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"
+    />
+</head>
+<body>
+    <nav class="navbar navbar-light bg-dark justify-content-between px-3 py-2 fixed-top">
+        <a class="navbar-brand" onclick="openNav()" style="cursor: pointer; color: white"><i class="fa-solid fa-bars fa-fade fa-xl" style="color: #ffffff;" height="100px" ></i></a>
+    </nav>
+    <div id="mySidenav" class="sidenav">
+      <a href="javascript:void(0)" class="closebtn" onclick="closeNav()" style="position:absolute;top:35px">&times;</a>
+        <a href="/">Home</a>
+    </div>
+    <main id="main-content">
+        <div class="container col-xxl-8 px-4 py-5">
+            <div class="row flex-lg-row align-items-center g-5 py-5" style="position: absolute;top:50px;left: 25%;right:25%">
+              <div class="col-md-6" >
+                <img src="../static/sign_in_side.png" class="d-block mx-lg-auto img-fluid" alt="Sign In" width="1200px" height="1200px" loading="lazy">
+              </div>
+              <div class="col-12 col-md-6">
+                <div class="container">
+                    <div class="card">
+                        
+                      <h2>Login Form</h2>
+                      <form method='post' action="/signin">
+                        <label for="username">Username/Mail id</label>
+                        <input type="text" id="username" name="username" placeholder="Enter your username" required>
+                  
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                        <br>
+                        <button type="submit">Sign In</button>
+                      </form>
+                      <div class="switch">Don't have an account? <a href="#" onclick="switchCard()">Register here</a></div>
+                    </div>
+
+                    <div class="card" style="display: none;">
+                      <h2>Register Form</h2>
+                      <form method="post" action="/register" onsubmit="return validatePassword()">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                        
+                        <label for="enterPassword">Password</label>
+                        <input type="password" id="enterPassword" name="enterPassword" placeholder="Enter your password" required>
+                        <span style="color: crimson;">Atleast 1 Uppercase letter,Atleast 1 Lowercase letter,Atleast 1 special character,Atleast 1 digit,Min length : 8</span>
+                        <br>
+          
+                        <label for="confirmPassword">Confirm Password</label>
+                        <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Enter your password again" required>
+                        <br>
+                        <button type="submit">Register</button>
+                      </form>
+                      <div class="switch">Already have an account? <a href="#" onclick="switchCard()">Sign In here</a></div>
+                    </div>
+                    
+                  </div>
+              </div>
+            </div>
+          </div>
+    </main>
+    <footer class="bg-dark text-light text-center py-3">
+      <div class="container-fluid">
+        <p>&copy; 2023 | Music Streaming</p>
+      </div>
+    </footer>
+    <script>
+        function openNav() {
+          document.getElementById("mySidenav").style.width = "250px";
+          document.getElementById("main-content").style.marginLeft = "250px";
+          document.getElementById("main-content").style.width = "calc(100% - 250px)";
+          document.body.style.overflowX = "hidden";
+          document.body.style.backgroundColor = "rgba(0,0,0,0.4)";
+        }
+  
+        function closeNav() {
+          document.getElementById("mySidenav").style.width = "0";
+          document.getElementById("main-content").style.marginLeft = "0";
+          document.getElementById("main-content").style.width = "100%";
+          document.body.style.overflowX = "auto";
+          document.body.style.backgroundColor = "white";
+        }
+
+
+        function switchCard() {
+            const loginCard = document.querySelector('.container .card:nth-child(1)');
+            const registerCard = document.querySelector('.container .card:nth-child(2)');
+
+            if (loginCard.style.display === 'none') {
+                loginCard.style.display = 'block';
+                registerCard.style.display = 'none';
+            }
+            else {
+                loginCard.style.display = 'none';
+                registerCard.style.display = 'block';
+            }
+        }
+    </script>
+
+
+    <script>
+      function validatePassword() {
+          var password = document.getElementById("enterPassword").value;
+          var confirmPassword = document.getElementById("confirmPassword").value;
+
+          // Constraints
+          var uppercaseRegex = /[A-Z]/;
+          var specialCharRegex = /[!@#$%^&*(),.?":{}|<>]/;
+          var lowercaseRegex = /[a-z]/;
+          var digitRegex = /\d/;
+          var lengthRegex = /^.{8,12}$/;
+
+          if (!uppercaseRegex.test(password)) {
+              alert("Password must contain at least one uppercase letter.");
+              return false;
+          }
+
+          if (!specialCharRegex.test(password)) {
+              alert("Password must contain at least one special character.");
+              return false;
+          }
+
+          if (!lowercaseRegex.test(password)) {
+              alert("Password must contain at least one lowercase letter.");
+              return false;
+          }
+
+          if (!digitRegex.test(password)) {
+              alert("Password must contain at least one digit.");
+              return false;
+          }
+
+          if (!lengthRegex.test(password)) {
+              alert("Password must be between 8 and 12 characters in length.");
+              return false;
+          }
+
+          if (password !== confirmPassword) {
+              alert("Passwords do not match!");
+              return false;
+          }
+          return true;
+      }
+    </script>
+    <!-- fontawesome -->
+    <script src="https://kit.fontawesome.com/d060c4db93.js" crossorigin="anonymous"></script>
+
+
+    <!-- bootstrap 5.3.2 -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+      crossorigin="anonymous"
+    ></script>  
+</body>
+</html>

@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music-Admin</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+
+    <style>
+        body {
+          display: flex;
+          flex-direction: column;
+          min-height: 100vh; /* Set the minimum height of the body to 100% of the viewport height */
+          margin: 0;
+        }
+        .fullpage {
+            flex:1;
+        }
+
+        .dataholder {
+            width: 2.5in;
+            height: 2.5in;
+            margin: .5in;
+            background-color: white;
+            text-align: center; 
+            line-height: 2in;
+            border-radius: 20px; /* Center the text vertically by setting line-height equal to the container height */
+        }
+        .sidenav {
+        height: 100%;
+        width: 0;
+        /* 0 width - change this with JavaScript */
+        position: fixed;
+        /* Stay in place */
+        z-index: 1;
+        /* Stay on top */
+        top: 0;
+        
+        left: 0;
+        background-color: #111;
+
+        overflow-x: hidden;
+        /* Disable horizontal scroll */
+        padding-top: 60px;
+        /* Place content 60px from the top */
+        transition: 0.5s;
+        /* 0.5 second transition effect to slide in the sidenav */
+      }
+
+      .sidenav a {
+        padding: 8px 8px 8px 32px;
+        text-decoration: none;
+        font-size: 25px;
+        color: #818181;
+        display: block;
+        transition: 0.3s;
+      }
+
+      .sidenav a:hover {
+        color: #f1f1f1;
+      }
+
+      .sidenav .closebtn {
+        position: absolute;
+        top: 0;
+        right: 25px;
+        font-size: 36px;
+        margin-left: 50px;
+      }
+    </style>
+</head>
+
+<body style="padding-top: 50px;">
+    <nav class="navbar navbar-light bg-dark justify-content-between fixed-top">
+        <a class="navbar-brand" onclick="openNav()" style="cursor: pointer; color: white"><i class="fa-solid fa-bars fa-fade fa-xl" style="color: #ffffff;" height="100px" ></i></a>
+        <div style="position:absolute;top:10px;left:80px">
+          <a class="navbar-brand" style="cursor: pointer;" onclick="openNav()"><i class="fa-solid fa-user fa-fade" style="color: #ffffff;" ></i><span style="color: #ffffff;" id="username"> Admin : {{nav_username}}</span></a>
+        </div>
+        <h4 class="nav-heading" style="color:white;cursor:pointer;position: absolute;left:700px" onclick="openNav()"><strong>Admin Home</strong></h4>
+    </nav>
+  
+    <div id="mySidenav" class="sidenav"> 
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()" style="position:absolute;top:35px">&times;</a>
+        <a href="javascript:void(0)">Home</a>
+        <a href="/admin_logout">Admin Logout</a>
+    </div>
+
+    <div class="fullpage" id="main-content">
+        <div class="row my-5 mx-5">
+            <div class="col-12 col-md-6">
+                <div class="dataholder container px-5 py-2" onclick="redirect('user')" style="background-color: #f1f1f1;border-radius: 10%;width:250px;height:200px">
+                    <div class="text-center"><h2>Total Users(Users + Creators)</h2></div>
+                    <div class="text-center"><h3>- {{total_users}} -</h3></div>
+                </div>
+            </div>
+            <div class="col-12 col-md-6">
+                <div class="dataholder container px-5 py-2" onclick="redirect('creator')" style="background-color: #f1f1f1;border-radius: 10%;width:250px;height:200px">
+                    <div class="text-center"><h2>Total Creators</h2></div>
+                    <div class="text-center"><h3>- {{ total_creators }} -</h3></div>
+                </div>
+            </div>
+        </div>
+        <div class="row my-5 mx-5">
+            <div class="col-12 col-md-6">
+                <div class="dataholder container px-5 py-2" onclick="redirect('songs')" style="background-color: #f1f1f1;border-radius: 10%;width:250px;height:200px">
+                    <div class="text-center"><h2>Total Songs</h2></div>
+                    <div class="text-center"><h3>- {{total_songs}} -</h3></div>
+                </div>
+            </div>
+            <div class="col-12 col-md-6">
+                <div class="dataholder container px-5 py-2" onclick="redirect('albums')" style="background-color: #f1f1f1;border-radius: 10%;width:250px;height:200px">
+                    <div class="text-center"><h2>Total Albums</h2></div>
+                    <div class="text-center"><h3>- {{total_albums}} -</h3></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <footer class="bg-dark text-light text-center py-3">
+        <div class="container">
+          <p>&copy; 2023 | Music Streaming</p>
+        </div>
+    </footer>
+  
+
+    <script>
+
+        function redirect(ele){
+            window.location.href =`/admin/all/${ele}`;
+        }
+
+
+        function openNav() {
+        document.getElementById("mySidenav").style.width = "250px";
+        document.getElementById("main-content").style.marginLeft = "250px";
+        document.getElementById("main-content").style.width = "calc(100% - 250px)";
+        document.body.style.overflowX = "hidden";
+        document.body.style.backgroundColor = "rgba(0,0,0,0.4)";
+      }
+
+      function closeNav() {
+        document.getElementById("mySidenav").style.width = "0";
+        document.getElementById("main-content").style.margin = "auto";
+        document.getElementById("main-content").style.width = "100%";
+        document.body.style.overflowX = "auto";
+        document.body.style.backgroundColor = "white";
+      }
+
+        
+
+    </script>
+    <!-- for bootstrap -->
+    <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+    crossorigin="anonymous"
+    ></script>
+    
+
+
+    <!-- for fontawesome -->
+    <script src="https://kit.fontawesome.com/d060c4db93.js" crossorigin="anonymous"></script>
+</body>
+
+
+</html>

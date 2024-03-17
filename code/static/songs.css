@@ -1,0 +1,264 @@
+  .sidenav {
+    height: 100%;
+    /* 100% Full-height */
+    width: 0;
+    /* 0 width - change this with JavaScript */
+    position: fixed;
+    /* Stay in place */
+    z-index: 1;
+    /* Stay on top */
+    top: 0;
+    /* Stay at the top */
+    left: 0;
+    background-color: #111;
+    /* Black*/
+    overflow-x: hidden;
+    /* Disable horizontal scroll */
+    padding-top: 60px;
+    /* Place content 60px from the top */
+    transition: 0.5s;
+    /* 0.5 second transition effect to slide in the sidenav */
+  }
+
+  .sidenav a {
+    padding: 8px 8px 8px 32px;
+    text-decoration: none;
+    font-size: 25px;
+    color: #818181;
+    display: block;
+    transition: 0.3s;
+  }
+
+  .sidenav a:hover {
+    color: #f1f1f1;
+  }
+
+  .sidenav .closebtn {
+    position: absolute;
+    top: 0;
+    right: 25px;
+    font-size: 36px;
+    margin-left: 50px;
+  }
+
+
+
+
+
+  .modal {
+    display: none;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index:1;
+  }
+
+  .modal-content {
+      background-color: #fff;
+      margin: 10% auto;
+      padding: 20px;
+      border: 1px solid #888;
+  }
+
+  .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+  }
+
+  /* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */
+  @media screen and (max-height: 450px) {
+    .sidenav {
+      padding-top: 15px;
+    }
+
+    .sidenav a {
+      font-size: 18px;
+    }
+  }
+  
+
+
+  /* For song containers */
+    .container{
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-around;
+    }
+    .container .playlist-content{
+        display: flex;
+        flex-wrap: wrap;
+    }
+    .card {
+        width: calc(20% - 20px);
+        margin: 10px;
+        background-color: #fff;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s;
+    }
+    .card:hover {
+        transform: scale(1.05);
+    }
+
+    .card img {
+        width: 100%;
+        height: auto;
+    }
+
+    @media screen and (max-width: 768px) {
+        .card {
+            width: calc(50% - 20px);
+        }
+    }
+    .card:hover .onImage-buttons{
+        display: block !important;
+    }
+    .share-button{
+        position: absolute;
+        top: 8px;
+        right: 16px;
+        background-color: crimson;
+        height: 40px;
+        width: 40px;
+        border-radius: 50%;
+        border: none;
+    }
+    .like-button{
+        position: absolute;
+        top: 8px;
+        left: 16px;
+        background-color: crimson;
+        height: 40px;
+        width: 40px;
+        border-radius: 50%;
+        border: none;
+    }
+    .play-button{
+        position: absolute;
+        top: 80px;
+        left: 100px;
+        background-color: crimson;
+        height: 40px;
+        width: 40px;
+        border-radius: 50%;
+        border: none;
+    }
+
+    .rate-button{
+      position: absolute;
+      bottom: 16px;
+      left: 100px;
+      background-color: crimson;
+      height: 40px;
+      width: 40px;
+      border-radius: 50%;
+      border: none;
+  }
+
+    @media screen and (max-width: 576px) {
+        .card {
+            width: calc(100% - 20px);
+        }
+    }
+
+
+
+
+        /* for music bar */
+        .slider {
+          height: 6px;
+          background-color: #ddd;
+          border-radius: 5px;
+          position: relative;
+          cursor: pointer;
+          user-select: none;
+        }
+        
+        .progress {
+          height: 100%;
+          width: 0;
+          background-color: #007bff;
+          border-radius: 5px;
+          transition: width 0.01s ease-in-out;
+        }
+        
+        
+        
+        
+        
+        
+        .collapsible {
+          display: block;
+          position: fixed;
+          bottom: 80px;
+          /* Height of the fixed-bottom navbar */
+          left: 0;
+          width: 100%;
+          height: calc(100% - (2*68px));
+          /* Subtract the height of the navbar from the total height */
+          background-color: #f9f9f9;
+          overflow: hidden;
+          transition: height 0.5s ease-in-out;
+          /* Adding transition for smooth animation */
+          z-index: 9999;
+        }
+        
+        .collapsed {
+          height: 0;
+        }
+        
+        
+        
+        
+        .hero-container {
+          justify-content: center;
+          align-items: center;
+          height: 600px;
+          background-color: #f0f0f0;
+        }
+        
+        
+        .hero-content {
+          text-align: center;
+        }
+        
+        
+        
+        .hero-content h1 {
+          font-size: 3em;
+          margin-bottom: 20px;
+        }
+        
+        .hero-content p {
+          font-size: 1.2em;
+          color: #555;
+        }
+        
+        
+        
+        
+        .scrollable-container {
+        width: 100%; /* Set the width of the container */
+        height: 450px; /* Set the height of the container */
+        overflow: auto; /* Enable scrolling */
+        border: 1px solid #ccc; /* Optional: Add a border for visual clarity */
+        }
+        
+        .scrollable-content {
+        padding: 10px; /* Optional: Add padding to the content inside the scrollable container */
+        }
+
+
+
+
+
+
+        body {
+          display: flex;
+          flex-direction: column;
+          min-height: 100vh; /* Set the minimum height of the body to 100% of the viewport height */
+          margin: 0;
+        }
+        main {
+          flex: 1; /* Allow the main content to grow and take up remaining vertical space */
+        }
