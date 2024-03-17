@@ -295,9 +295,9 @@
             if (results.length > 0) {
                 for (let i = 0; i < results.length; i++) {
 
-                  let option = $("<option>").val(results[i]).on("click",(e)=>{$("#searchInput").val(results[i])})
-                  dropdown.append(option)
-                    // dropdown.append("<option value='" + results[i] + "'>" + results[i] + "</option>");
+                  // let option = $("<option>").val(results[i]).on("click",(e)=>{$("#searchInput").val(results[i])})
+                  // dropdown.append(option)
+                  dropdown.append("<option value='" + results[i] + "'>" + results[i] + "</option>");
                 }
                 dropdown.show();
             } else {
