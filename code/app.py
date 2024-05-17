@@ -37,17 +37,18 @@ app.config['SECRET_KEY'] = secrets['webtoken_secret']
 with open('C:\ONE DRIVE ROHITH\OneDrive\Documents\music_streaming\code\client_secret_754017271774-1k3a7h8fttkpgg3hvpcls111j4nqnr83.apps.googleusercontent.com.json') as config_file:
     config = json.load(config_file)
 
+oauth = OAuth(app)
 google = oauth.remote_app(
     'google',
-    consumer_key=config['client_id'],
-    consumer_secret=config['client_secret'],
+    consumer_key=config['web']['client_id'],
+    consumer_secret=config['web']['client_secret'],
     request_token_params={
         'scope': 'email profile',
     },
-    base_url=config['auth_provider_x509_cert_url'],
+    base_url=config['web']['auth_provider_x509_cert_url'],
     access_token_method='POST',
-    access_token_url=config['token_uri'],
-    authorize_url=config['auth_uri']
+    access_token_url=config['web']['token_uri'],
+    authorize_url=config['web']['auth_uri']
 )
 
 
