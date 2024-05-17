@@ -125,11 +125,12 @@
                 {% for user_data in data %}
                     <div class="card my-2" id="">
                         <div class="card-header">
-                            <h5><strong>User Name:</strong> {{ user_data[1] }}</h5>
+                            <h5><strong>Name:</strong> {{ user_data[1] }}</h5>
                         </div>
                         <div class="card-body">
                             <p class="card-text"><strong>User ID:</strong> {{ user_data[0] }}</p>
-                            <p class="card-text"><strong>User Role:</strong> {{ user_data[2] }}</p>
+                            <p class="card-text"><strong>User Name:</strong> {{ user_data[2] }}</p>
+                            <p class="card-text"><strong>User Role:</strong> {{ user_data[3] }}</p>
                         </div>
                     </div>
                 {% endfor %}
@@ -151,11 +152,11 @@
                 {% for creator_data in data %}
                     <div class="card my-2" id="">
                         <div class="card-header">
-                            <h5><strong>User Name:</strong> {{ creator_data[1] }}</h5>
+                            <h5><strong></strong>Name:</strong> {{ creator_data[1] }}</h5>
                         </div>
                         <div class="card-body">
                             <p class="card-text"><strong>User ID:</strong> {{ creator_data[0] }}</p>
-                            
+                            <p class="card-text"><strong>User Name:</strong> {{ creator_data[2] }}</p>
                         </div>
                     </div>
                 {% endfor %}

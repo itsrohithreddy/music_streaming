@@ -19,7 +19,7 @@ class Albums(db.Model): #One (One : Album , Many : Songs)
 
 
 
-class Playlists(db.Model): #Many (Many :Playlists , Many : Somgs)
+class Playlists(db.Model): #Many (Many :Playlists , Many : Songs)
     playlist_id = db.Column(db.String, primary_key=True)
     playlist_name = db.Column(db.String(50), nullable=False,unique=True)
     playlist_image=db.Column(db.BLOB)
@@ -47,8 +47,12 @@ class Songs(db.Model):  #Many
 class Users(db.Model):
     user_id = db.Column(db.String,primary_key = True)
     user_name = db.Column(db.String(50),nullable=False,unique=True)
-    role= db.Column(db.String(50),nullable=False)
-    password = db.Column(db.String,nullable=False)
+    first_name= db.Column(db.String(50),nullable=False)
+    last_name = db.Column(db.String(50))
+    age = db.Column(db.Integer)
+    role = db.Column(db.String(50),nullable=False)
+    user_image_url = db.Column(db.String)
+    password = db.Column(db.String)
 
 
 class User_likes_ratings(db.Model):

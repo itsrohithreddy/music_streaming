@@ -39,7 +39,7 @@
         <nav class="navbar navbar-light bg-dark justify-content-between px-3 py-2 fixed-top">
           <a class="navbar-brand" onclick="openNav()" style="cursor: pointer; color: white"><i class="fa-solid fa-bars fa-fade fa-xl" style="color: #ffffff;" height="100px" ></i></a>
           <div style="position:absolute;top:10px;left:80px">
-            <a class="navbar-brand" style="cursor: pointer;" onclick="openNav()"><i class="fa-solid fa-user fa-fade" style="color: #ffffff;"></i><span style="color: #ffffff;" id="username"> {{ nav_username }}</span></a>
+            <a class="navbar-brand" style="cursor: pointer;" onclick="openNav()"><img src='{{profilePic_url}}' style="width: 40px;height: 40px;border-radius: 50%;object-fit: cover;"><span style="color: #ffffff;" id="username"> {{ nav_username }}</span></a>
           </div>
           <h4 class="nav-heading" style="color:white;cursor:pointer;position: absolute;left:700px" onclick="openNav()"><strong>Create</strong></h4>
         </nav>
@@ -126,7 +126,7 @@
                           </div>
                           <div class="mb-3">
                             <label for="userName" class="form-label">Creator Username : </label>
-                            <input type="text" class="form-control" id="userName" name="userName" value='{{ nav_username }}' readonly>
+                            <input type="text" class="form-control" id="userName" name="userName" value='{{ username }}' readonly>
                           </div>
                           <div class="mb-3">
                             <label for="lyrics" class="form-label">Lyrics : </label>
@@ -201,7 +201,7 @@
                 <form class="form" id="editForm" method="post" action="" enctype="multipart/form-data">
                     <div class="mb-3">
                       <div class="mb-3">
-                        <h4 style="color:crimson">Please specify the new value in feilds which you want to edit . Leave the other feilds as they are </h4>
+                        <h4 style="color:crimson">Please specify the new value in feilds which you want to edit . Leave the other feilds as it is </h4>
                       </div>
                           <div class="mb-3">
                             <label for="songName-e" lass="form-label">Song Name : </label>
@@ -213,7 +213,7 @@
                           </div>
                           <div class="mb-3">
                             <label for="userName-e" class="form-label">Creator Username : </label>
-                            <input type="text" class="form-control" id="userName-e" name="userName-e" value='{{ nav_username }}' readonly>
+                            <input type="text" class="form-control" id="userName-e" name="userName-e" value='{{ username }}' readonly>
                           </div>
                           <div class="mb-3">
                             <label for="lyrics-e" class="form-label">Lyrics : </label>
