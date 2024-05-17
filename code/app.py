@@ -25,12 +25,12 @@ app=Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI']="sqlite:///"+os.path.join(current_dir,"music.db")
 db = SQLAlchemy()
 db.init_app(app)
-app.secret_key = 'wertyuiop'
-app.config['SECRET_KEY'] = 'xcvbnm,rtyui'
+with open('C:\ONE DRIVE ROHITH\OneDrive\Documents\music_streaming\code\secret.json') as config_file2:
+     secrets = json.load(config_file2)
+app.secret_key = secrets['google_secret']
+app.config['SECRET_KEY'] = secrets['webtoken_secret']
 
 # app.app_context().push()
-
-
 
 
 
