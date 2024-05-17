@@ -33,12 +33,9 @@ app.config['SECRET_KEY'] = secrets['webtoken_secret']
 # app.app_context().push()
 
 
-
-
+#OAuth
 with open('C:\ONE DRIVE ROHITH\OneDrive\Documents\music_streaming\code\client_secret_754017271774-1k3a7h8fttkpgg3hvpcls111j4nqnr83.apps.googleusercontent.com.json') as config_file:
     config = json.load(config_file)
-
-
 
 google = oauth.remote_app(
     'google',
@@ -56,8 +53,6 @@ google = oauth.remote_app(
 
 
 # print(dir(oauth))
-def gen_uuid():
-    return str(uuid.uuid4())
 
 def decodeutf8(value):
     decoded_value = value.decode('utf-8')
@@ -125,13 +120,6 @@ class User_likes_ratings(db.Model):
     song_rating=db.Column(db.Float,server_default=db.text('0'))
 
 
-
-
-
-
-# admin_dict=dict()
-# admin_dict['gurudurohith@gmail.com']='Rohith@2003'
-# admin_dict['bhanu@gmail.com']='Bhanu@2003'
 
 
 
