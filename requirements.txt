@@ -2,3 +2,4 @@ flask==3.0.0
 flask_sqlalchemy==3.1.1
 Werkzeug==2.3.8
 Flask-OAuthlib==0.9.6
+PyJWT==2.8.0
