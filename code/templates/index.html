@@ -72,17 +72,19 @@
         <div class="col-12">
           <div class="card-container">
             {% for song in top_rated_songs %}
-            <div class="card" style="width: 3in; height: 3in; margin: 15px">
-              <div class="container card_img-content" style="position: relative;">
+            <div class="card">
+              <div class="container card_img-content">
                 <!-- <img src="{{ url_for('static', filename='UML3.png') }}" class="card-img-top" alt="PlayList Image"/> -->
-                <img  src="data:image/png;base64,{{ song.album.album_image|decodeutf8 }}" id="image-{{ song.song_name }}" ,alt="{{ song.song_name }} Image" class="card-img-top" height="220px">
-                <div class="onImage-buttons" style="display: none;">
+                <img  src="data:image/png;base64,{{ song.album.album_image|decodeutf8 }}" id="image-{{ song.song_name }}" ,alt="{{ song.song_name }} Image" class="card-img-top">
+                <div class="onImage-buttons">
                   <!-- <button class="play-button" onclick="togglePlayPause(this)"><i class="fa-solid fa-play fa-xl"></i></button> -->
                   <button class="play-button"><i class="fa-solid fa-play fa-xl" onclick="playsong(this)"><span class="d-none">{{ song.song_name }}</span></i></button>
                 </div>
               </div>
-              <div class="card-body">
-                <p class="card-text"><strong>{{ song.song_name }}</strong></p>
+              <div class="card-content">
+                <div class="card-body">
+                  <p class="card-text"><strong>{{ song.song_name }}</strong></p>
+                </div>
               </div>
             </div>
             {% endfor %}
@@ -100,14 +102,16 @@
         <div class="col-12">
           <div class="card-container">
             {% for playlist in playlists %}
-            <div class="card" style="width: 3in; height: 3in; margin: 15px">
+            <div class="card">
               <div class="container card_img-content">
                 <img  src="data:image/png;base64,{{ playlist.playlist_image|decodeutf8  }}" id="playlist-{{ playlist.playlist_name }}" ,alt="{{ playlist.playlist_name }} Image" class="card-img-top" height="220px">
-                <div class="onImage-buttons" style="display: none;">
+                <div class="onImage-buttons">
                 </div>
               </div>
-              <div class="card-body">
-                <p class="card-text"><a class="my-link" href='{{ playlist_url }}{{ playlist.playlist_name }}' style="cursor: pointer;"><strong>{{ playlist.playlist_name }}</strong></a></p>
+              <div class="card-content">
+                <div class="card-body">
+                  <p class="card-text"><a class="my-link" href='{{ playlist_url }}{{ playlist.playlist_name }}' style="cursor: pointer;"><strong>{{ playlist.playlist_name }}</strong></a></p>
+                </div>
               </div>
             </div>
             {% endfor %}
@@ -125,15 +129,17 @@
         <div class="col-12">
           <div class="card-container">
             {% for album in albums %}
-            <div class="card" style="width: 3in; height: 3in; margin: 15px">
+            <div class="card">
               <div class="container card_img-content">
                 <img  src="data:image/png;base64,{{ album.album_image|decodeutf8 }}" id="album-{{ album.album_name }}" ,alt="{{ album.album_name }} Image" class="card-img-top" height="220px">
-                <div class="onImage-buttons" style="display: none;">
+                <div class="onImage-buttons">
                   
                 </div>
               </div>
-              <div class="card-body">
-                <p class="card-text"><a class="my-link" onclick="prevent(event)" href='{{ album_url }}{{ album.album_name }}' style="cursor: pointer;"><strong>{{ album.album_name }}</strong></a></p>
+              <div class="card-content">
+                <div class="card-body">
+                  <p class="card-text"><a class="my-link" onclick="prevent(event)" href='{{ album_url }}{{ album.album_name }}' style="cursor: pointer;"><strong>{{ album.album_name }}</strong></a></p>
+                </div>
               </div>
             </div>
             {% endfor %}

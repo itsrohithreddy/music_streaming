@@ -22,8 +22,7 @@
       href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css"/>
     
 </head>
-
-    <body style="padding-bottom: 75px;padding-top: 85px;">
+<body style="padding-bottom: 75px;padding-top: 85px;">
         <nav class="navbar navbar-light bg-dark justify-content-between px-3 py-2 fixed-top">
             <a class="navbar-brand" onclick="openNav()" style="cursor: pointer; color: white"><i class="fa-solid fa-bars fa-fade fa-xl" style="color: #ffffff;" height="100px" ></i></a>
             <div style="position:absolute;top:10px;left:80px">
@@ -38,40 +37,42 @@
         </div>
 
 
-        <main id="main-content">
+    <main id="main-content">
         <div class="container">
             <!-- All Rows -->
             {% for song in songs %}
                 <div class="card">
                     <div class="container playlist-content">
                         <!-- <img src="https://via.placeholder.com/300" alt="Card Image"> -->
-                        <img  src="data:image/png;base64,{{ song.album.album_image|decodeutf8 }}" id="image-{{ song.song_name }}" alt="{{ song.song_name }} Image" class="card-img-top" height="220px">
-                        <div class="onImage-buttons" style="display: none;">
+                        <img  src="data:image/png;base64,{{ song.album.album_image|decodeutf8 }}" id="image-{{ song.song_name }}" alt="{{ song.song_name }} Image" class="card-img-top">
+                        <div class="onImage-buttons">
                             <button class="like-button" ><i class="like-icon" data-song_id="{{ song.song_id }}" onclick="toggleLike(this)"></i></button>
                             <!-- <button class="play-button" onclick="playsong(this)">Play</button> -->
                             <button class="play-button"><i class="fa-solid fa-play fa-xl" onclick="playsong(this)"><span class="d-none">{{ song.song_name }}</span></i></button>
                         </div>
                     </div>
-                    <div class="card-body">
-                        <p><strong>{{ song.song_name }}</strong></p>
-                        
-                        {% if data == 0 %}
-                            <div class="playlist-button" style="position: absolute;bottom:0px;">
+                    <div class="card-content">
+                        <div class="card-body">
+                            <p class="card-text"><strong>{{ song.song_name }}</strong></p>
+                            
+                            {% if data == 0 %}
+                                <div class="playlist-button">
+                                    <!-- <button class="btn btn-outline-success my-2 my-sm-0 openModalBtn" onclick="modalFunction()"><a href="#" style="color: crimson;"><strong>Add to Playlist</strong></a></button> -->
+                                    <span>Add to Playlist : </span>
+                                    <input type="submit" class="btn btn-outline-success my-sm-0 openModalBtn" onclick="modalFunction(this)" value="{{ song.song_name }}">
+                                </div>
+                                <div class="playlist-button">
+                                    <span>Rate this song : </span>
+                                    <input type="submit" class="btn btn-outline-success my-sm-0 openModalBtn" value="{{ song.song_name }}" onclick="modalFunctionRate(this)">
+                                </div>
+                            {% else %}
+                            <div class="playlist-button" >
                                 <!-- <button class="btn btn-outline-success my-2 my-sm-0 openModalBtn" onclick="modalFunction()"><a href="#" style="color: crimson;"><strong>Add to Playlist</strong></a></button> -->
-                                <span>Add to Playlist : </span>
-                                <input type="submit" class="btn btn-outline-success my-2 my-sm-0 openModalBtn" onclick="modalFunction(this)" value="{{ song.song_name }}">
+                                <span>Delete from Playlist : </span>
+                                <input type="submit" class="btn btn-outline-success my-sm-0 openModalBtn" onclick="modalFunctionDelete(this)" value="{{ song.song_name }}">
                             </div>
-                            <div class="playlist-button">
-                                <span>Rate this song : </span>
-                                <input type="submit" class="btn btn-outline-success my-2 my-sm-0 openModalBtn" value="{{ song.song_name }}" onclick="modalFunctionRate(this)">
-                            </div>
-                        {% else %}
-                        <div class="playlist-button" >
-                            <!-- <button class="btn btn-outline-success my-2 my-sm-0 openModalBtn" onclick="modalFunction()"><a href="#" style="color: crimson;"><strong>Add to Playlist</strong></a></button> -->
-                            <span>Delete from Playlist : </span>
-                            <input type="submit" class="btn btn-outline-success my-2 my-sm-0 openModalBtn" onclick="modalFunctionDelete(this)" value="{{ song.song_name }}">
+                            {% endif %}
                         </div>
-                        {% endif %}
                     </div>
                 </div>
             {% endfor %}
@@ -187,7 +188,7 @@
               </div>
             </div>
         </div>
-        </main>
+    </main>
 
         <!-- Music Playing bar HTML -->
         <nav class="navbar fixed-bottom navbar-light bg-light p-0">

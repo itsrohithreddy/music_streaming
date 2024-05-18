@@ -2,39 +2,47 @@
 
       .slick-prev,
       .slick-next {
-          width: .25in !important;
-          height: .25in !important;
+          width: 1.50vw !important;
+          height: 1.50vw !important;
           color: white !important;
           background-color:black !important;
-          border-radius: 5px !important;
+          border-radius: 0.25vw !important;
           z-index: 1 !important;
       }
 
       .slick-prev:hover {
-          background-color: black;
+        background-color: white;
+        color: black;
       }
 
       .slick-next:hover {
-          background-color: black;
+        background-color: white;
+        color: black;
       }
       
       .card-container {
         display: flex;
+        flex-wrap: wrap;
         /* Comment below tow lines for arrows to be visible */
         /* overflow-x: auto;
         padding: 15px; */
         scrollbar-width: thin;
-        scrollbar-color: transparent transparent;
+        scrollbar-color: transparent;
       }
 
       .card {
-        flex: 0 0 auto;
+        width: 20vw; 
+        height: 20vw; 
+        margin: 2vw; 
+        position: relative;
+        /* flex: 0 0 auto; */
+        display:flex;
+        flex-direction: column;
         transition: transform 0.3s ease-in-out;
       }
 
       .card:hover {
         transform: scale(1.1);
-        height: 5in;
       }
 
       .card img {
@@ -42,7 +50,7 @@
       }
 
       .card:hover img {
-        transform: scale(1.1);
+        transform: scale(1.0);
       }
 
       .card-container::-webkit-scrollbar {
@@ -52,7 +60,7 @@
       .card-container::-webkit-scrollbar-thumb {
         background-color: transparent;
       }
-      .share-button{
+      /* .share-button{
         position: absolute;
         top: 8px;
         right: 16px;
@@ -61,29 +69,68 @@
         width: 40px;
         border-radius: 50%;
         border: none;
-      }
+      } */
       .like-button{
         position: absolute;
-        top: 8px;
-        left: 16px;
+        top: 10%;
+        left: 15%;
+        transform: translate(-50%, -50%);
         background-color: crimson;
-        height: 40px;
-        width: 40px;
+        height: 2.5vw;
+        width: 2.5vw;
         border-radius: 50%;
         border: none;
       }
       .play-button{
         position: absolute;
-        top: 80px;
-        left: 120px;
+        top: 40%;
+        left: 50%;
+        transform: translate(-50%, -50%);
         background-color: crimson;
-        height: 40px;
-        width: 40px;
+        height: 2.5vw;
+        width: 2.5vw;
         border-radius: 50%;
         border: none;
       }
+
+
+      .card_img-content {
+        position: relative;
+        flex-grow: 1;
+      }
+
+      .card-content {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+    
+      .card-img-top {
+        width: 90%;
+        height: 90%;
+        object-fit: cover;
+      }
+
+
+      .onImage-buttons {
+        display: none;
+        /* position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        justify-content: center;
+        align-items: center; */
+      }
       .card:hover .onImage-buttons{
         display: block !important;
+      }
+      .card-body {
+        padding: 2vw; /* Adjust padding relative to the card size */
+      }
+    
+      .card-text {
+        font-size: 1.0vw; /* Adjust font size relative to the card size */
       }
       .sidenav {
         height: 100%;

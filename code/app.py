@@ -574,11 +574,12 @@ def creator_upload():
     audio_file = request.files['songFile']
     audio_file_io= base64.b64encode(BytesIO(audio_file.read()).getvalue())
     album_image=request.files['albumImage']
-    image = Image.open(album_image)
-    album_image = image.resize((224,224))
-    buffered = BytesIO()
-    album_image.save(buffered, format="PNG")
-    album_image_io= base64.b64encode(buffered.getvalue())
+    if album_image:
+        image = Image.open(album_image)
+        album_image = image.resize((224,224))
+        buffered = BytesIO()
+        album_image.save(buffered, format="PNG")
+        album_image_io= base64.b64encode(buffered.getvalue())
     check_albumName=Albums.query.filter(Albums.album_name == album_name).first()
     if check_albumName is not None:
         # print(base64.b64encode(image_file_io.getvalue()),"--------------------------------------------------------------------")

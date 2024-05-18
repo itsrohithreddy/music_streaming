@@ -85,24 +85,88 @@
         flex-wrap: wrap;
         justify-content: space-around;
     }
-    .container .playlist-content{
+
+
+    /* .container .playlist-content{
         display: flex;
         flex-wrap: wrap;
+    } */
+
+    .container .playlist-content{
+      position: relative;
+      flex-grow: 1;
+    }
+
+    .card-content {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+  
+    .card-img-top {
+      width: 90%;
+      height: 90%;
+      object-fit: cover;
+    }
+
+    .onImage-buttons {
+      display: none;
+    }
+
+    .card-body {
+      padding: 1vw; /* Adjust padding relative to the card size */
+    }
+  
+    .card-text {
+      font-size: 1.2vw; /* Adjust font size relative to the card size */
+    }
+
+
+    .playlist-button {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .playlist-button span {
+      font-size: 1.2vw;
+      margin-bottom: 3px;
+    }
+
+    .playlist-button input {
+      font-size: 1.0vw;
+      padding: 3px;
+      cursor: pointer;
     }
     .card {
+      width: 20vw; 
+      height: 20vw; 
+      margin: 2vw; 
+      position: relative;
+      /* flex: 0 0 auto; */
+      background-color: #fff;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      display:flex;
+      flex-direction: column;
+      transition: transform 0.3s ease-in-out;
+    }
+    /* .card {
         width: calc(20% - 20px);
         margin: 10px;
         background-color: #fff;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         transition: transform 0.3s;
-    }
+    } */
     .card:hover {
-        transform: scale(1.05);
+        transform: scale(1.1);
     }
 
-    .card img {
+    /* .card img {
         width: 100%;
         height: auto;
+    } */
+    .card img {
+      transition: transform 0.3s ease-in-out;
     }
 
     @media screen and (max-width: 768px) {
@@ -113,7 +177,7 @@
     .card:hover .onImage-buttons{
         display: block !important;
     }
-    .share-button{
+    /* .share-button{
         position: absolute;
         top: 8px;
         right: 16px;
@@ -122,8 +186,20 @@
         width: 40px;
         border-radius: 50%;
         border: none;
-    }
+    } */
+
     .like-button{
+      position: absolute;
+      top: 10%;
+      left: 15%;
+      transform: translate(-50%, -50%);
+      background-color: crimson;
+      height: 2.5vw;
+      width: 2.5vw;
+      border-radius: 50%;
+      border: none;
+    }
+    /* .like-button{
         position: absolute;
         top: 8px;
         left: 16px;
@@ -132,8 +208,20 @@
         width: 40px;
         border-radius: 50%;
         border: none;
-    }
+    } */
+
     .play-button{
+      position: absolute;
+      top: 40%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: crimson;
+      height: 2.5vw;
+      width: 2.5vw;
+      border-radius: 50%;
+      border: none;
+    }
+    /* .play-button{
         position: absolute;
         top: 80px;
         left: 100px;
@@ -142,9 +230,9 @@
         width: 40px;
         border-radius: 50%;
         border: none;
-    }
+    } */
 
-    .rate-button{
+    /* .rate-button{
       position: absolute;
       bottom: 16px;
       left: 100px;
@@ -153,7 +241,7 @@
       width: 40px;
       border-radius: 50%;
       border: none;
-  }
+    } */
 
     @media screen and (max-width: 576px) {
         .card {
