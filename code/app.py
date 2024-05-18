@@ -8,6 +8,7 @@ from flask import render_template
 from flask import make_response
 from flask import jsonify
 import jwt
+from PIL import Image
 
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash,check_password_hash
@@ -34,7 +35,7 @@ app.config['SECRET_KEY'] = secrets['webtoken_secret']
 
 
 #OAuth
-with open('C:\ONE DRIVE ROHITH\OneDrive\Documents\music_streaming\code\client_secret_754017271774-1k3a7h8fttkpgg3hvpcls111j4nqnr83.apps.googleusercontent.com.json') as config_file:
+with open('C:\ONE DRIVE ROHITH\OneDrive\Documents\music_streaming\code\client_secret_229198823021-k3j7djkj9qirc80en4goanaj3k24m33q.apps.googleusercontent.com.json') as config_file:
     config = json.load(config_file)
 
 oauth = OAuth(app)
@@ -55,6 +56,14 @@ google = oauth.remote_app(
 
 # print(dir(oauth))
 
+
+
+
+def gen_uuid():
+    return str(uuid.uuid4())
+
+
+               
 def decodeutf8(value):
     decoded_value = value.decode('utf-8')
     return decoded_value
@@ -124,7 +133,7 @@ class User_likes_ratings(db.Model):
 
 
 
-with open('C:\ONE DRIVE ROHITH\OneDrive\Documents\music_streaming\code\admin.json') as config_file1:
+with open('C:\ONE DRIVE ROHITH\OneDrive\Documents\music_streaming\code\\admin.json') as config_file1:
     admin_dict = json.load(config_file1)
 
 
@@ -135,7 +144,7 @@ with open('C:\ONE DRIVE ROHITH\OneDrive\Documents\music_streaming\code\admin.jso
 @app.route('/',methods=['GET'])
 @app.route('/index',methods=['GET'])
 def home():
-    print(request.cookies)
+    # print(request.cookies)
     if request.cookies.get('token')  is None:
         token_payload = {
             'username':"",
@@ -460,7 +469,11 @@ def createPlaylist():
         playlist_name=request.form["playlist_name"]
         song_name=request.form['song_name-a']
         playlist_image=request.files['playlistImage']
-        playlist_image_io= base64.b64encode(BytesIO(playlist_image.read()).getvalue())
+        image = Image.open(playlist_image)
+        playlist_image = image.resize((224,224))
+        buffered=BytesIO()
+        playlist_image.save(buffered, format="PNG")
+        playlist_image_io= base64.b64encode(buffered.getvalue())
         song_id=Songs.query.filter(Songs.song_name == song_name).first().song_id
         check_playlist=Playlists.query.filter(Playlists.playlist_name == playlist_name).first()
         user_id=Users.query.filter(Users.user_name == decoded_token.get("username")).first().user_id
@@ -561,7 +574,11 @@ def creator_upload():
     audio_file = request.files['songFile']
     audio_file_io= base64.b64encode(BytesIO(audio_file.read()).getvalue())
     album_image=request.files['albumImage']
-    album_image_io= base64.b64encode(BytesIO(album_image.read()).getvalue())
+    image = Image.open(album_image)
+    album_image = image.resize((224,224))
+    buffered = BytesIO()
+    album_image.save(buffered, format="PNG")
+    album_image_io= base64.b64encode(buffered.getvalue())
     check_albumName=Albums.query.filter(Albums.album_name == album_name).first()
     if check_albumName is not None:
         # print(base64.b64encode(image_file_io.getvalue()),"--------------------------------------------------------------------")
