@@ -28,11 +28,16 @@
 
   <body style="padding-bottom: 75px;padding-top: 85px;">
     <nav class="navbar navbar-light bg-dark justify-content-between fixed-top">
-      <a class="navbar-brand" onclick="openNav()" style="cursor: pointer; color: white"><i class="fa-solid fa-bars fa-fade fa-xl" style="color: #ffffff;" height="100px" ></i></a>
-      <div style="position:absolute;top:10px;left:80px">
-        <a class="navbar-brand" style="cursor: pointer;" onclick="openNav()"><img src='{{profilePic_url}}' style="width: 40px;height: 40px;border-radius: 50%;object-fit: cover;"><span style="color: #ffffff;" id="username"> {{nav_username}}</span></a>
+      <div class="navbar-brand-container">
+        <a class="navbar-brand menu-icon" onclick="openNav()" style="cursor: pointer;">
+          <i class="fa-solid fa-bars fa-fade fa-xl" style="color: #ffffff;"></i>
+        </a>
+        <a class="navbar-brand" style="cursor: pointer;">
+            <img src='{{profilePic_url}}'>
+            <span style="color: #ffffff;" id="username"> {{nav_username}}</span>
+        </a>
       </div>
-      <h4 class="nav-heading" style="color:white;cursor:pointer;cursor:pointer;position: absolute;left:700px" onclick="openNav()"><strong>Home</strong></h4>
+      <h4 class="nav-heading" onclick="openNav()"><strong>Home</strong></h4>
       <form class="form-inline" style="display: flex;position : relative;">
         <input
           class="form-control mr-sm-2"
@@ -50,8 +55,8 @@
     </nav>
 
     <div id="mySidenav" class="sidenav"> 
-      <a href="javascript:void(0)" class="closebtn" onclick="closeNav()" style="position:absolute;top:35px">&times;</a>
-      <a href="javascript:void(0)">Home</a>
+      <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+      <!-- <a href="javascript:void(0)">Home</a> -->
       {% if loggedIn_status == "1" %}
         <a href="/create">Create</a>
       {% else %}
@@ -338,9 +343,6 @@
     </script>
 
 
-    <script>
-      
-    </script>
 
     <script>
       $(document).ready(function () {
@@ -405,19 +407,6 @@
         alert("Please signin to contribute . Redirecting yot to signin page.........")
         window.location.href='/signin';
       }
-
-      // Function to open the modal
-      // function openModal(content) {
-      //   modal=document.getElementById("myModal");
-      //   modal.style.display = 'block';
-      //   document.getElementById('icon-modal-content').innerHTML=content;
-      // }
-
-      // Function to close the modal
-      // function closeModal() {
-      //   modal.style.display = 'none';
-      // }
-
 
 
       function openNav() {

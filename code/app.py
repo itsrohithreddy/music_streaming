@@ -875,7 +875,7 @@ def search():
             song_album_id=song.album_id
             album_name=Albums.query.filter(Albums.album_id == song_album_id).first().album_name
             data["song_album_names_lst"].append([song.song_name,album_name])
-    print(data["song_album_names_lst"])
+    # print(data["song_album_names_lst"])
     if len(playlists)>0:
         for playlist in playlists:
             data["playlist_names_lst"].append(playlist.playlist_name)

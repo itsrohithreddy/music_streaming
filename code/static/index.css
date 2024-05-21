@@ -1,5 +1,5 @@
       
-
+      /* For Corousal functionality */
       .slick-prev,
       .slick-next {
           width: 1.50vw !important;
@@ -35,6 +35,18 @@
         color: black; /* Active dot color */
     }
       
+
+
+
+
+
+
+
+
+
+
+
+    /* For corousal and its cards */
       .card-container {
         display: flex;
         flex-wrap: wrap;
@@ -147,6 +159,18 @@
       .card-text {
         font-size: 1.0vw; /* Adjust font size relative to the card size */
       }
+
+
+
+
+
+
+
+
+
+
+
+      /* Navbar on Top */
       .sidenav {
         height: 100%;
         
@@ -167,11 +191,18 @@
         transition: 0.5s;
         /* 0.5 second transition effect to slide in the sidenav */
       }
-
+      @media (max-width: 768px) {
+        .sidenav {
+            padding-top: 200px; /* More padding for small screens */
+        }
+        .sidenav .closebtn{
+          top:500px;
+        }
+      }
       .sidenav a {
         padding: 8px 8px 8px 32px;
         text-decoration: none;
-        font-size: 25px;
+        font-size: 1.6rem;
         color: #818181;
         display: block;
         transition: 0.3s;
@@ -183,21 +214,12 @@
 
       .sidenav .closebtn {
         position: absolute;
-        top: 0;
+        top: 40px;
         right: 25px;
-        font-size: 36px;
+        font-size: 2.25rem;
         margin-left: 50px;
       }
-
-      
-      .playlist-content {
-        position: relative;
-      }
-
-
-
-
-      .modal {
+      /* .modal {
         display: none;
         position: fixed;
         top: 0;
@@ -213,26 +235,103 @@
           padding: 20px;
           border: 1px solid #888;
           width: 40% !important;
-      }
+      } */
     
-      .close {
-          color: #aaa;
-          float: right;
-          font-size: 28px;
-          font-weight: bold;
-          cursor: pointer;
-      }
       /* Style page content - use this if you want to push the page content to the right when you open the side navigation */
 
       /* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */
       @media screen and (max-height: 450px) {
-        .sidenav {
-          padding-top: 15px;
+        .sidenav a {
+          font-size: 1.125rem;
+        }
+      }
+    
+      .navbar-brand-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 10px;
+      }
+    
+      .navbar-brand {
+          display: flex;
+          align-items: center;
+          color: white;
+      }
+    
+      .navbar-brand img {
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          object-fit: cover;
+          margin-right: 8px;
+      }
+      .nav-heading {
+        cursor: pointer;
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 1.5rem;
+        color: white;
+        white-space: nowrap;
+      }
+      @media (max-width: 768px) {
+        .nav-heading {
+            font-size: 1.2rem;
+            left: 50%;
+            transform: translateX(-50%);
         }
 
-        .sidenav a {
-          font-size: 18px;
+        .form-inline {
+            flex-direction: column;
+            width: 100%;
         }
+
+        .form-inline input, .form-inline button {
+            width: 100%;
+            margin-top: 0.5rem;
+        }
+        .navbar-brand-container {
+          padding: 0 10px; /* Adjust for smaller screens */
+        }
+        .navbar-brand {
+            font-size: 0.8rem;
+        }
+        
+        .navbar-brand img {
+          width: 30px; /* Adjust size for smaller screens */
+          height: 30px;
+        }
+        .navbar-brand, .nav-heading {
+          position: static;
+          transform: none;
+        }
+
+        .nav-heading {
+          text-align: center;
+          width: 100%;
+        }
+      }
+
+
+      #searchResultsDropdown {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        z-index: 1000;
+        background: white; /* Ensure the background is visible */
+        border: 1px solid #ccc; /* Optional: Add border for better visibility */
+      }
+  
+      #searchResultsDropdown div {
+        padding: 8px;
+        cursor: pointer;
+      }
+  
+      #searchResultsDropdown div:hover {
+        background-color: #f0f0f0;
       }
       
 
@@ -245,7 +344,8 @@
 
 
 
-    /* for music bar */
+
+    /* For music playing bar nav */
     .slider {
       height: 6px;
       background-color: #ddd;
@@ -262,11 +362,6 @@
       border-radius: 5px;
       transition: width 0.01s ease-in-out;
     }
-    
-    
-    
-    
-    
     
     .collapsible {
       display: block;
@@ -288,9 +383,6 @@
       height: 0;
     }
     
-    
-    
-    
     .hero-container {
       justify-content: center;
       align-items: center;
@@ -298,11 +390,9 @@
       background-color: #f0f0f0;
     }
     
-    
     .hero-content {
       text-align: center;
     }
-    
     
     
     .hero-content h1 {
@@ -315,9 +405,7 @@
       color: #555;
     }
     
-    
-    
-    
+  
     .scrollable-container {
     width: 100%; /* Set the width of the container */
     height: 450px; /* Set the height of the container */
@@ -341,6 +429,11 @@
 
 
 
+
+
+
+
+    /*Body of HTML Page*/ 
     body {
       display: flex;
       flex-direction: column;
@@ -348,23 +441,3 @@
       margin: 0;
     }
 
-
-    #searchResultsDropdown {
-      display: none;
-      position: absolute;
-      top: 100%;
-      left: 0;
-      width: 100%;
-      z-index: 1000;
-      background: white; /* Ensure the background is visible */
-      border: 1px solid #ccc; /* Optional: Add border for better visibility */
-    }
-
-    #searchResultsDropdown div {
-      padding: 8px;
-      cursor: pointer;
-    }
-
-    #searchResultsDropdown div:hover {
-      background-color: #f0f0f0;
-    }
