@@ -1,4 +1,5 @@
-  .sidenav {
+/*Top navbar */
+.sidenav {
     height: 100%;
     /* 100% Full-height */
     width: 0;
@@ -441,6 +442,14 @@
 
 
 
+
+
+
+
+
+
+
+        /*Body amd Main*/
         body {
           display: flex;
           flex-direction: column;
