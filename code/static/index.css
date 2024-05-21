@@ -329,6 +329,14 @@
     padding: 10px; /* Optional: Add padding to the content inside the scrollable container */
     }
 
+    .song_name{
+      font-size: 1.2vw;
+    }
+
+    .creator_name{
+      font-size: 1.0vw;
+    }
+
 
 
 
