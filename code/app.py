@@ -209,7 +209,7 @@ def logout():
 @app.route('/signin/callback')
 def authorized():
     resp = google.authorized_response()
-    print("Response : ",resp)
+    # print("Response : ",resp)
     if resp is None or resp.get('access_token') is None:
         return 'Access denied: reason=%s error=%s' % (
             request.args['error_reason'],
@@ -751,7 +751,7 @@ def user_rating():
 
 
 
-# Get the liked songs of currently logged in user(JS fetch API (AJAX) )
+# Get the liked songs of currently logged in user(JS fetch API )
 @app.route("/user_liked_songs/<string:song_id>",methods=["GET"])
 def check_liked_songs(song_id):
     decoded_token = jwt.decode(request.cookies.get('token'), app.config['SECRET_KEY'], algorithms=['HS256'])
@@ -770,7 +770,7 @@ def check_liked_songs(song_id):
 
 
 
-# For user to add a song to liked list(JS fetch API (AJAX) )
+# For user to add a song to liked list(JS fetch API )
 @app.route("/song_like/<string:song_id>/<string:check>",methods=['GET'])
 def like_song(song_id,check):
     decoded_token = jwt.decode(request.cookies.get('token'), app.config['SECRET_KEY'], algorithms=['HS256'])
@@ -834,7 +834,7 @@ def add_song_queue(song_name):
 
 
 
-# Count the likes of a song in create page(JS fetch API (AJAX) )
+# Count the likes of a song in create page(JS fetch API )
 @app.route("/song_likes_count/<string:song_id>",methods=['GET'])
 def song_likes_count(song_id):
     data={}
@@ -844,7 +844,7 @@ def song_likes_count(song_id):
 
 
 
-# Average rating of a song in create page(JS fetch API (AJAX) )
+# Average rating of a song in create page(JS fetch API )
 @app.route("/song_avg_rating/<string:song_id>",methods=['GET'])
 def song_avg_rating(song_id):
     data={}
@@ -854,18 +854,28 @@ def song_avg_rating(song_id):
     if len(song_ratings)>0:
         for rating in song_ratings:
             sum+=rating.song_rating
-    data["rating"]=sum/len(song_ratings)
+        data["rating"]=sum/len(song_ratings)
+    else:
+        data["rating"]=0
     return jsonify(data),200
 
 
-
+# For search in index page (JS AJAX API) 
 @app.route("/search_albums_playlists",methods=['GET'])
 def search():
     data={}
     data["playlist_names_lst"]=[]
     data["album_names_lst"]=[]
+    data["song_album_names_lst"]=[]
     playlists=Playlists.query.all()
     albums=Albums.query.all()
+    songs=Songs.query.all()
+    if len(songs)>0:
+        for song in songs:
+            song_album_id=song.album_id
+            album_name=Albums.query.filter(Albums.album_id == song_album_id).first().album_name
+            data["song_album_names_lst"].append([song.song_name,album_name])
+    print(data["song_album_names_lst"])
     if len(playlists)>0:
         for playlist in playlists:
             data["playlist_names_lst"].append(playlist.playlist_name)
@@ -873,6 +883,9 @@ def search():
         for album in albums:
             data["album_names_lst"].append(album.album_name)
     return jsonify(data)
+
+
+
 
 
 

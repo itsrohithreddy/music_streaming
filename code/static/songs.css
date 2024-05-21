@@ -326,14 +326,22 @@
         
         
         .scrollable-container {
-        width: 100%; /* Set the width of the container */
-        height: 450px; /* Set the height of the container */
-        overflow: auto; /* Enable scrolling */
-        border: 1px solid #ccc; /* Optional: Add a border for visual clarity */
+          width: 100%; /* Set the width of the container */
+          height: 450px; /* Set the height of the container */
+          overflow: auto; /* Enable scrolling */
+          border: 1px solid #ccc; /* Optional: Add a border for visual clarity */
         }
         
         .scrollable-content {
-        padding: 10px; /* Optional: Add padding to the content inside the scrollable container */
+          padding: 10px; /* Optional: Add padding to the content inside the scrollable container */
+        }
+
+        .song_name{
+          font-size: 1.2vw;
+        }
+
+        .creator_name{
+          font-size: 1.0vw;
         }
 
 

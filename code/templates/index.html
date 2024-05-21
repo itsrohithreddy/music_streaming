@@ -41,8 +41,9 @@
           placeholder="Search Albums,Playlists"
           aria-label="Search"
         />
-        <select id="searchResultsDropdown" style="margin-right: 10px;"></select>
-        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">
+        <!-- <select id="searchResultsDropdown" style="margin-right: 10px;"></select> -->
+        <div id="searchResultsDropdown"></div>
+        <button class="btn btn-outline-success my-2 my-sm-0" type="button" onclick="searchFunc()">
           Search
         </button>
       </form>
@@ -152,84 +153,77 @@
     <!-- Music playing Bar HTML -->
     <nav class="navbar fixed-bottom navbar-light bg-light p-0">
       <div class="col-12"> 
-        <div class="slider" id="myRange" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
-          <div class="progress bg-success progress-bar-striped progress-bar-animated" id="progressBar"></div>
-        </div>
+          <div class="slider" id="myRange" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+              <div class="progress bg-success progress-bar-striped progress-bar-animated" id="progressBar"></div>
+          </div>
       </div>
-      <div class="container-fluid  p-3 py-2 ">
-        <div class="col-1">
-
-
-          <img src="" class="img" style="width: 45%;">
-
-
-        </div>
-        <div class="col-2" style="margin-left: -3%;">
-          <div style="font-size: x-small;">
-            <h6 class="song_name"></h6>
-
-          </div>
-          <div style="font-size: x-small;" class="creator_name">
-            
-          </div>
-        </div>
-        <div class="mx-auto">
-          <i class="fa-solid fa-repeat ps-2 mx-1"></i>
-          <i class="fa-solid fa-backward-fast px-2"></i>
-          <i class="fa-solid fa-play px-2" id="masterPlay"></i>
-          <!-- <i class="fa-solid fa-pause"></i> -->
-          <i class="fa-solid fa-forward-fast px-2"></i>
-          <i class="fa-solid fa-shuffle px-2"></i>
-        </div>
-        <div class="col-1 ms-auto">
-          <i class="fa-solid fa-ellipsis px-2 ms-2"></i>
-          <i class="fa-solid fa-volume-high px-2"></i>
-          <i class="fa-solid fa-up-right-and-down-left-from-center ps-2" onclick="toggleCollapse()"></i>
-          <div class="container mt-4">
-          
-            <div class="collapsible collapsed" id="collapseExample">
-              <div class="row">
-                  <div class="col-6 container">
-
-
-                      <img src="" class="pt-5 mt-5 px-5 mx-5 img">
-
-
-
-                      <div class="px-5 mx-5 pt-2 mt-2 h5 song_name" >
-                        
-                      </div>
-                      <div class="px-5 mx-5 py-2 my-2 creator_name">
-                        
-                      </div>
-                  </div>
-                  <div class="col-6 container">
-                      <div class="container border rounded h3 p-5 text-center">
-                        Lyrics
-                        <div class="container border rounded h6 text-center">
-                          <div class="scrollable-container">
-                            <div class="scrollable-content">
-                              <pre id="lyrics">
-      
-                              </pre>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                  </div>
+      <div class="container-fluid p-3 py-2">
+          <div class="row w-100 align-items-center">
+              <div class="col-1">
+                  <img src="" class="img" style="width: 45%;">
               </div>
-            </div>
+              <div class="col-2" style="margin-left: -3%;">
+                  <div style="font-size: x-small;">
+                      <h6 class="song_name"></h6>
+                  </div>
+                  <div style="font-size: x-small;" class="creator_name"></div>
+              </div>
+              <div class="col-auto mx-auto">
+                  <i class="fa-solid fa-repeat ps-2 mx-1"></i>
+                  <i class="fa-solid fa-backward-fast px-2"></i>
+                  <i class="fa-solid fa-play px-2" id="masterPlay"></i>
+                  <!-- <i class="fa-solid fa-pause"></i> -->
+                  <i class="fa-solid fa-forward-fast px-2"></i>
+                  <i class="fa-solid fa-shuffle px-2"></i>
+              </div>
+              <div class="col-1 ms-auto">
+                  <i class="fa-solid fa-ellipsis px-2 ms-2"></i>
+                  <i class="fa-solid fa-volume-high px-2"></i>
+                  <i class="fa-solid fa-up-right-and-down-left-from-center ps-2" onclick="toggleCollapse()"></i>
+              </div>
           </div>
-        </div>
       </div>
     </nav>
+  
+    <div class="container mt-4">
+        <div class="collapsible collapsed" id="collapseExample">
+            <div class="row">
+                <div class="col-6">
+                  <div class="border rounded h3 p-5 text-center">
+                    Details
+                    <div class="border rounded h6 text-center">
+                      <div class="scrollable-container">
+                        <div class="scrollable-content">
+                          <img src="" class="pt-5 mt-5 px-5 mx-5 img img-fluid">
+                          <div class="px-5 mx-5 pt-2 mt-2 h5 song_name"></div>
+                          <div class="px-5 mx-5 py-2 my-2 creator_name"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>  
+                </div>
+                <div class="col-6">
+                    <div class="border rounded h3 p-5 text-center">
+                        Lyrics
+                        <div class="border rounded h6 text-center">
+                            <div class="scrollable-container">
+                                <div class="scrollable-content">
+                                    <pre id="lyrics"></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- footer -->
-   <footer class="bg-dark text-light text-center py-3">
-      <div class="container">
-        <p>&copy; 2023 | Music Streaming</p>
-      </div>
-    </footer>
+    <footer class="bg-dark text-light text-center py-3">
+        <div class="container">
+          <p>&copy; 2023 | Music Streaming</p>
+        </div>
+      </footer>
 
 
 
@@ -238,80 +232,114 @@
     <!-- These below 2 scripts should be placed first -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
-    
+
+
+
+    <!-- Searching  albums,playlists and songs in  index page -->
     <script>
-      var playlist_names_lst=[];
-      var album_names_lst=[];
+      var playlist_names_lst = [];
+      var album_names_lst = [];
       $(document).ready(function () {
-            // Perform AJAX request
-            // console.log("YES");
-            $.ajax({
-                type: "GET",
-                url: "/search_albums_playlists", 
-                // data: { query: query },
-                dataType: "json",
-                success: function (data) {
-                    // console.log(data)
-                    playlist_names_lst=data["playlist_names_lst"];
-                    album_names_lst=data["album_names_lst"];
-                },
-                error: function (error) {
-                    console.log("Error: " + error);
-                }
-            });
-        });
-        $("#searchInput").on("keyup", function () {
+          // Perform AJAX request
+          $.ajax({
+              type: "GET",
+              url: "/search_albums_playlists",
+              dataType: "json",
+              success: function (data) {
+                  playlist_names_lst = data["playlist_names_lst"];
+                  album_names_lst = data["album_names_lst"];
+                  song_album_names_lst = data["song_album_names_lst"]
+              },
+              error: function (error) {
+                  console.log("Error: " + error);
+              }
+          });
+      });
+
+      $("#searchInput").on("keyup", function () {
           let query = $(this).val();
-          let reg = new RegExp('^'+query,'i');
-          let results=[]
-          // console.log(reg)
-          // console.log(album_names_lst)
-            for(let album_name of album_names_lst){
-              // console.log(album_name)
-              if(reg.test(album_name)){
-                results.push(album_name);
-              }
-            }
-            for(let playlist_name of playlist_names_lst){
-              if(reg.test(playlist_name)){
-                results.push(playlist_name);
-              }
-            }
-            // console.log(results)
-            displayResults(results);
-        });
-        $("#searchInput").on("focus", function () {
-        // Show the dropdown when the input gains focus
-          displayResults([]);
-        });
+          if(query===""){
+            displayResults([])
+          }
+          else{
+            let reg = new RegExp('^' + query, 'i');
+            let results = [];
 
-        $("#searchInput").on("blur", function () {
-            // Hide the dropdown when the input loses focus
-            hideResults();
-        });
-
-        function hideResults() {
-          $("#searchResultsDropdown").hide();
-        }
-
-        function displayResults(results) {
-            let dropdown = $("#searchResultsDropdown");
-            dropdown.empty();
-
-            if (results.length > 0) {
-                for (let i = 0; i < results.length; i++) {
-
-                  // let option = $("<option>").val(results[i]).on("click",(e)=>{$("#searchInput").val(results[i])})
-                  // dropdown.append(option)
-                  dropdown.append("<option value='" + results[i] + "'>" + results[i] + "</option>");
+            for (let album_name of album_names_lst) {
+                if (reg.test(album_name)) {
+                    results.push(album_name);
                 }
-                dropdown.show();
-            } else {
-                dropdown.append("<option value=''>No results found</option>");
-                // hideResults();
             }
-        }
+            for (let playlist_name of playlist_names_lst) {
+                if (reg.test(playlist_name)) {
+                    results.push(playlist_name);
+                }
+            }
+            for (let song_album_name of song_album_names_lst) {
+              if(reg.test(song_album_name[0])) {
+                  results.push(song_album_name[0])
+              }
+            }
+            displayResults(results);
+          }
+      });
 
+      $("#searchInput").on("focus", function () {
+          displayResults([]);
+      });
+
+      $("#searchInput").on("blur", function () {
+        //do not reduce below 400 else the onclick event of dynamically appended <div> tag will not work.
+          setTimeout(hideResults, 400); // Delay to allow click event to register
+      });
+
+      function hideResults() {
+          $("#searchResultsDropdown").hide();
+      }
+
+      function displayResults(results) {
+          let dropdown = $("#searchResultsDropdown");
+          dropdown.empty();
+
+          if (results.length > 0) {
+            for (let i = 0; i < results.length; i++) {
+                    let option = $("<div>").text(results[i]).on("click", function (event) {
+                        // event.stopPropagation(); // Prevent blur from hiding results
+                        // alert("Clicked")
+                        $("#searchInput").val($(this).text());
+                        hideResults();
+                    });
+                    dropdown.append(option);
+                
+            }
+            dropdown.show();
+          } else {
+              dropdown.append("<div>No results found</div>");
+          }
+      }
+      function searchFunc(event){
+        let searchTerm = $("#searchInput").val();
+        if(searchTerm!==""){
+          if(album_names_lst.includes(searchTerm)){
+            window.location.href='/album_songs/'+searchTerm;
+          }
+          else if(playlist_names_lst.includes(searchTerm)){
+            window.location.href='/playlist_songs/'+searchTerm
+          }
+          else{
+            for (let song_album_name of song_album_names_lst){
+              if(searchTerm===song_album_name[0]){
+                window.location.href='/album_songs/'+song_album_name[1];
+              }
+            }
+          }
+        }
+      }
+    </script>
+
+
+    <script>
+      
     </script>
 
     <script>
@@ -322,6 +350,7 @@
           autoplay: true,
           autoplaySpeed: 2000, // set the duration of the slide
           arrows:true,
+          dots:true,
           // prevArrow: '<button type="button" class="slick-prev">Previous</button>',
           // nextArrow: '<button type="button" class="slick-next">Next</button>',
           prevArrow: '<button class="slick-prev"><i class="bi bi-arrow-left"></i></button>',
@@ -378,16 +407,16 @@
       }
 
       // Function to open the modal
-      function openModal(content) {
-        modal=document.getElementById("myModal");
-        modal.style.display = 'block';
-        document.getElementById('icon-modal-content').innerHTML=content;
-      }
+      // function openModal(content) {
+      //   modal=document.getElementById("myModal");
+      //   modal.style.display = 'block';
+      //   document.getElementById('icon-modal-content').innerHTML=content;
+      // }
 
       // Function to close the modal
-      function closeModal() {
-        modal.style.display = 'none';
-      }
+      // function closeModal() {
+      //   modal.style.display = 'none';
+      // }
 
 
 

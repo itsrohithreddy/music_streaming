@@ -19,6 +19,21 @@
         background-color: white;
         color: black;
       }
+
+
+      .slick-dots {
+        bottom: -25px; /* Adjust this value to position the dots as needed */
+        text-align: center;
+    }
+    
+    .slick-dots li button:before {
+        font-size: 12px;
+        color: black; /* Dot color */
+    }
+    
+    .slick-dots li.slick-active button:before {
+        color: black; /* Active dot color */
+    }
       
       .card-container {
         display: flex;
@@ -333,4 +348,15 @@
       left: 0;
       width: 100%;
       z-index: 1000;
-  }
+      background: white; /* Ensure the background is visible */
+      border: 1px solid #ccc; /* Optional: Add border for better visibility */
+    }
+
+    #searchResultsDropdown div {
+      padding: 8px;
+      cursor: pointer;
+    }
+
+    #searchResultsDropdown div:hover {
+      background-color: #f0f0f0;
+    }

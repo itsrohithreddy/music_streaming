@@ -190,80 +190,73 @@
         </div>
     </main>
 
-        <!-- Music Playing bar HTML -->
+        <!-- Music playing Bar HTML -->
         <nav class="navbar fixed-bottom navbar-light bg-light p-0">
             <div class="col-12"> 
-              <div class="slider" id="myRange" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
-                <div class="progress bg-success progress-bar-striped progress-bar-animated" id="progressBar"></div>
-              </div>
+                <div class="slider" id="myRange" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                    <div class="progress bg-success progress-bar-striped progress-bar-animated" id="progressBar"></div>
+                </div>
             </div>
-            <div class="container-fluid  p-3 py-2 ">
-              <div class="col-1">
-
-
-                <img src="" class="img" alt="cover up image" style="width: 45%;">
-
-
-              </div>
-              <div class="col-2" style="margin-left: -3%;">
-                <div style="font-size: x-small;">
-                  <h6 class="song_name"></h6>
-
+            <div class="container-fluid p-3 py-2">
+                <div class="row w-100 align-items-center">
+                    <div class="col-1">
+                        <img src="" class="img" style="width: 45%;">
+                    </div>
+                    <div class="col-2" style="margin-left: -3%;">
+                        <div style="font-size: x-small;">
+                            <h6 class="song_name"></h6>
+                        </div>
+                        <div style="font-size: x-small;"><p class="creator_name"></p></div>
+                    </div>
+                    <div class="col-auto mx-auto">
+                        <i class="fa-solid fa-repeat ps-2 mx-1"></i>
+                        <i class="fa-solid fa-backward-fast px-2"></i>
+                        <i class="fa-solid fa-play px-2" id="masterPlay"></i>
+                        <!-- <i class="fa-solid fa-pause"></i> -->
+                        <i class="fa-solid fa-forward-fast px-2"></i>
+                        <i class="fa-solid fa-shuffle px-2"></i>
+                    </div>
+                    <div class="col-1 ms-auto">
+                        <i class="fa-solid fa-ellipsis px-2 ms-2"></i>
+                        <i class="fa-solid fa-volume-high px-2"></i>
+                        <i class="fa-solid fa-up-right-and-down-left-from-center ps-2" onclick="toggleCollapse()"></i>
+                    </div>
                 </div>
-                <div style="font-size: x-small;" class="creator_name">
-                  
-                </div>
-              </div>
-              <div class="mx-auto">
-                <i class="fa-solid fa-repeat ps-2 mx-1"></i>
-                <i class="fa-solid fa-backward-fast px-2"></i>
-                <i class="fa-solid fa-play px-2" id="masterPlay"></i>
-                <!-- <i class="fa-solid fa-pause"></i> -->
-                <i class="fa-solid fa-forward-fast px-2"></i>
-                <!-- <i class="fa-solid fa-shuffle px-2"></i> -->
-              </div>
-              <div class="col-1 ms-auto">
-                <i class="fa-solid fa-ellipsis px-2 ms-2"></i>
-                <i class="fa-solid fa-volume-high px-2"></i>
-                <i class="fa-solid fa-up-right-and-down-left-from-center ps-2" onclick="toggleCollapse()"></i>
-                <div class="container mt-4">
-                
-                  <div class="collapsible collapsed" id="collapseExample">
-                    <div class="row">
-                        <div class="col-6 container">
-
-
-                            <img src="" class="pt-5 mt-5 px-5 mx-5 img">
-
-
-
-                            <div class="px-5 mx-5 pt-2 mt-2 h5 song_name" >
-                              
+            </div>
+        </nav>
+        
+        <div class="container mt-4">
+            <div class="collapsible collapsed" id="collapseExample">
+                <div class="row">
+                    <div class="col-6">
+                        <div class="border rounded h3 p-5 text-center">
+                        Details
+                        <div class="border rounded h6 text-center">
+                            <div class="scrollable-container">
+                            <div class="scrollable-content">
+                                <img src="" class="pt-5 mt-5 px-5 mx-5 img img-fluid">
+                                <div class="px-5 mx-5 pt-2 mt-2"><h5 class="song_name"></h5></div>
+                                <div class="px-5 mx-5 py-2 my-2"><p class="creator_name"></p></div>
                             </div>
-                            <div class="px-5 mx-5 py-2 my-2 creator_name">
-                              
                             </div>
                         </div>
-                        <div class="col-6 container">
-                            <div class="container border rounded h3 p-5 text-center">
-                              Lyrics
-                              <div class="container border rounded h6 text-center">
+                        </div>  
+                    </div>
+                    <div class="col-6">
+                        <div class="border rounded h3 p-5 text-center">
+                            Lyrics
+                            <div class="border rounded h6 text-center">
                                 <div class="scrollable-container">
-                                  <div class="scrollable-content">
-                                    <pre id="lyrics">
-            
-                                    </pre>
-                                  </div>
+                                    <div class="scrollable-content">
+                                        <pre id="lyrics"></pre>
+                                    </div>
                                 </div>
-                              </div>
                             </div>
                         </div>
                     </div>
-                  </div>
                 </div>
-              </div>
             </div>
-        </nav>
+        </div>
 
 
         <footer class="bg-dark text-light text-center py-3">
