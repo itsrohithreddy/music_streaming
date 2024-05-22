@@ -84,7 +84,7 @@
                 <img  src="data:image/png;base64,{{ song.album.album_image|decodeutf8 }}" id="image-{{ song.song_name }}" ,alt="{{ song.song_name }} Image" class="card-img-top">
                 <div class="onImage-buttons">
                   <!-- <button class="play-button" onclick="togglePlayPause(this)"><i class="fa-solid fa-play fa-xl"></i></button> -->
-                  <button class="play-button"><i class="fa-solid fa-play fa-xl" onclick="playsong(this)"><span class="d-none">{{ song.song_name }}</span></i></button>
+                  <button class="play-button"><i class="fa-solid fa-play fa-xl" id="cardPlayPause" onclick="playsong(this)"><span class="d-none">{{ song.song_name }}</span></i></button>
                 </div>
               </div>
               <div class="card-content">
@@ -174,12 +174,12 @@
                   <div style="font-size: x-small;" class="creator_name"></div>
               </div>
               <div class="col-auto mx-auto">
-                  <i class="fa-solid fa-repeat ps-2 mx-1"></i>
-                  <i class="fa-solid fa-backward-fast px-2"></i>
+                  <i class="fa-solid fa-repeat ps-2 mx-1" onclick="playNextSong()"></i>
+                  <!-- <i class="fa-solid fa-backward-fast px-2"></i> -->
                   <i class="fa-solid fa-play px-2" id="masterPlay"></i>
                   <!-- <i class="fa-solid fa-pause"></i> -->
-                  <i class="fa-solid fa-forward-fast px-2"></i>
-                  <i class="fa-solid fa-shuffle px-2"></i>
+                  <i class="fa-solid fa-forward-fast px-2" onclick="playNextSong()"></i>
+                  <!-- <i class="fa-solid fa-shuffle px-2"></i> -->
               </div>
               <div class="col-1 ms-auto">
                   <i class="fa-solid fa-ellipsis px-2 ms-2"></i>
@@ -344,6 +344,9 @@
 
 
 
+
+
+
     <script>
       $(document).ready(function () {
         $(".card-container").slick({
@@ -358,36 +361,21 @@
           prevArrow: '<button class="slick-prev"><i class="bi bi-arrow-left"></i></button>',
           nextArrow: '<button class="slick-next"><i class="bi bi-arrow-right"></i></button>',
         });
-        // if("{{ loggedIn_status }}" == "0"){
-        //   var myLink = $('.my-link');  //JQuery
-        //   myLink.click(function (event) {
-        //     event.preventDefault();
-        //     alert('Please log in to access this page');
-        //     window.location.href='/signin';
-        //   });
-        // }
-        // $("#main-content-2 .card-container .card").on("click", function (event) {
-        // // Prevent the default behavior (e.g., navigating to a new page)
-        // event.preventDefault();
-
-        // // Redirect to the Sign In page (update the URL as needed)
-        // window.location.href = 'sign-in.html';
-        // });
       });
 
 
 
-      function togglePlayPause(ele){
-                console.log(ele.classList)
-                // fa-play : (triangle) click to play
-                // fa-pause : (||) click to pause
-                if(ele.classList.contains('fa-play')){
-                    ele.classList.replace('fa-play', 'fa-pause');
-                }
-                else{
-                    ele.classList.replace('fa-pause', 'fa-play');
-                }
-            }
+      // function togglePlayPause(ele){
+      //           // console.log(ele.classList)
+      //           // fa-play : (triangle) click to play
+      //           // fa-pause : (||) click to pause
+      //           if(ele.classList.contains('fa-play')){
+      //               ele.classList.replace('fa-play', 'fa-pause');
+      //           }
+      //           else{
+      //               ele.classList.replace('fa-pause', 'fa-play');
+      //           }
+      // }
 
 
       function prevent(event){
@@ -441,37 +429,66 @@
 
     <!-- Music Playing Bar JS -->
     <script>
+      var queue = [];
       const slider = document.getElementById('myRange');
       const progressBar = document.getElementById('progressBar');
       let isDown = false;
-      let audio = new Audio("data:audio/wav;base64,");
+      let audio = new Audio("");
       let masterPlay = document.getElementById("masterPlay");
+      // let cardPlayPause = document.getElementById("cardPlayPause")
       let song_name = document.getElementsByClassName('song_name');
       let song_creator = document.getElementsByClassName('creator_name');
       let img = document.getElementsByClassName('img');
       let lyrics = document.getElementById('lyrics');
-
+      console.log("Audio : ",audio)
       function playsong(element){
-      var xhttp = new XMLHttpRequest();
-      var queue = "";
-      masterPlay.classList.replace('fa-pause','fa-play');
-      xhttp.onreadystatechange = function(){
-          if(this.readyState == 4 &&  this.status == 200){
-              queue = JSON.parse(this.responseText);
-              audio.src = ("data:audio/mp3;base64," + queue['song_file']);
-              delete queue['song_file'];
-              console.log(queue)
+        var xhttp = new XMLHttpRequest();
+        // masterPlay.classList.replace('fa-pause','fa-play');
+        // cardPlayPause.classList.replace('fa-pause','fa-play');
+        xhttp.onreadystatechange = function(){
+            if(this.readyState == 4 &&  this.status == 200){
+                queue.push(JSON.parse(this.responseText));
+                // audio.src = ("data:audio/mp3;base64," + queue[0]['song_file']);
+                // console.log("Audio : ",audio)
+                // // delete queue['song_file'];
+                
+                // console.log("queue : ",queue)
+                // audio.currentTime = 0;
+                // audio.play();
+                // masterPlay.classList.replace('fa-play','fa-pause');
+                // // cardPlayPause.classList.replace("fa-play","fa-pause")
+                // setdata_in_nav(queue[0]);
+                // queue.shift()
+                console.log("Added to queue")
+                console.log("queue : ",queue)
+                if (audio.paused && queue.length === 1) { // Play if audio is paused and it's the first song in the queue
+                    console.log("Playing Clicked song . ")
+                    console.log(queue[0])
+                    playNextSong();
+                }
+            }
+        }
+        // console.log(element.nodeValue)/
+        let request = '/add_song_queue/'+(element.childNodes[0].childNodes[0].nodeValue);
+        xhttp.open('GET',request,true);
+        xhttp.send(); 
+        
+        
+      }
+
+      function playNextSong() {
+          if (queue.length!=0) {
+              console.log("Audio : ",audio)
+              const song = queue[0];
+              audio.src = "data:audio/mp3;base64," + song['song_file'];
               audio.currentTime = 0;
               audio.play();
-              masterPlay.classList.replace('fa-play','fa-pause');
-              setdata_in_nav(queue);
+              masterPlay.classList.replace('fa-play', 'fa-pause');
+              setdata_in_nav(song);
+              queue.shift()
+          } else {
+              masterPlay.classList.replace('fa-pause', 'fa-play');
           }
-      }
-      console.log(element.nodeValue)
-      let request = '/add_song_queue/'+(element.childNodes[0].childNodes[0].nodeValue);
-      xhttp.open('GET',request,true);
-      xhttp.send(); 
-      
       }
 
       const setdata_in_nav = (queue)=>{
@@ -503,27 +520,35 @@
       });
 
       function updateProgressBar(event) {
-      const sliderRect = slider.getBoundingClientRect();
-      const percentage = (event.clientX - sliderRect.left) / slider.offsetWidth * 100;
-      const clampedPercentage = Math.min(100, Math.max(0, percentage+1));
-      progressBar.style.width = `${clampedPercentage}%`;
-      audio.currentTime = clampedPercentage*audio.duration/100;
+        const sliderRect = slider.getBoundingClientRect();
+        const percentage = (event.clientX - sliderRect.left) / slider.offsetWidth * 100;
+        const clampedPercentage = Math.min(100, Math.max(0, percentage+1));
+        progressBar.style.width = `${clampedPercentage}%`;
+        audio.currentTime = clampedPercentage*audio.duration/100;
       }
 
       masterPlay.addEventListener("click",()=>{
       if(audio.paused || audio.currentTime<=0){
           audio.play();
           masterPlay.classList.replace('fa-play','fa-pause');
+          // cardPlayPause.classList.replace('fa-play','fa-pause')
       }
       else{
           audio.pause();
           masterPlay.classList.replace('fa-pause','fa-play');
+          // cardPlayPause.classList.replace('fa-pause','fa-play');
       }
       })
       audio.addEventListener("timeupdate",()=>{
       let progressValue = parseInt((audio.currentTime/audio.duration)*100);
       progressBar.style.width = `${progressValue}%`;
-      console.log(progressValue);
+      // console.log(progressValue);
+      });
+
+      audio.addEventListener("ended", () => {
+        console.log("Playing Next")
+        console.log(queue[0])
+        playNextSong();
       });
 
       function toggleCollapse() {
