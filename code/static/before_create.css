@@ -1,45 +1,115 @@
+/*For Navbar on top*/    
 .sidenav {
-    height: 100%;
-    /* 100% Full-height */
-    width: 0;
-    /* 0 width - change this with JavaScript */
-    position: fixed;
-    /* Stay in place */
-    z-index: 1;
-    /* Stay on top */
-    top: 0;
-    /* Stay at the top */
-    left: 0;
-    background-color: #111;
-    /* Black*/
-    overflow-x: hidden;
-    /* Disable horizontal scroll */
-    padding-top: 60px;
-    /* Place content 60px from the top */
-    transition: 0.5s;
-    /* 0.5 second transition effect to slide in the sidenav */
+  height: 100%;
+  
+  width: 0;
+  /* 0 width - change this with JavaScript */
+  position: fixed;
+  
+  z-index: 1;
+  /* Stay on top */
+  top: 0;
+  
+  left: 0;
+  background-color: #111;
+  overflow-x: hidden;
+  /* Disable horizontal scroll */
+  padding-top: 60px;
+  /* Place content 60px from the top */
+  transition: 0.5s;
+  /* 0.5 second transition effect to slide in the sidenav */
+}
+@media (max-width: 768px) {
+  .sidenav {
+      padding-top: 200px; /* More padding for small screens */
   }
+  .sidenav .closebtn{
+    top:500px;
+  }
+}
+.sidenav a {
+  padding: 8px 8px 8px 32px;
+  text-decoration: none;
+  font-size: 1.6rem;
+  color: #818181;
+  display: block;
+  transition: 0.3s;
+}
 
+.sidenav a:hover {
+  color: #f1f1f1;
+}
+
+.sidenav .closebtn {
+  position: absolute;
+  top: 40px;
+  right: 25px;
+  font-size: 2.25rem;
+  margin-left: 50px;
+}
+
+@media screen and (max-height: 450px) {
   .sidenav a {
-    padding: 8px 8px 8px 32px;
-    text-decoration: none;
-    font-size: 25px;
-    color: #818181;
-    display: block;
-    transition: 0.3s;
+    font-size: 1.125rem;
+  }
+}
+
+.navbar-brand-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 10px;
+}
+
+.navbar-brand {
+    display: flex;
+    align-items: center;
+    color: white;
+}
+
+.navbar-brand img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 8px;
+}
+
+@media (max-width: 768px) {
+  .nav-heading {
+      font-size: 1.2rem;
+      left: 50%;
+      transform: translateX(-50%);
+  }
+  .navbar-brand-container {
+    padding: 0 10px; /* Adjust for smaller screens */
+  }
+  .navbar-brand {
+      font-size: 0.8rem;
+  }
+  
+  .navbar-brand img {
+    width: 30px; /* Adjust size for smaller screens */
+    height: 30px;
+  }
+  .navbar-brand {
+    position: static;
+    transform: none;
   }
 
-  .sidenav a:hover {
-    color: #f1f1f1;
-  }
+  
+}
 
-  .sidenav .closebtn {
-    position: absolute;
-    top: 0;
-    right: 25px;
-    font-size: 36px;
-    margin-left: 50px;
-  }
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -50,15 +120,4 @@
     border: none;
   }
 
-  /* Style page content - use this if you want to push the page content to the right when you open the side navigation */
-
-  /* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */
-  @media screen and (max-height: 450px) {
-    .sidenav {
-      padding-top: 15px;
-    }
-
-    .sidenav a {
-      font-size: 18px;
-    }
-  }
+  
