@@ -61,8 +61,8 @@
         <a href="/create">Create</a>
       {% else %}
         <a href="javascript:void(0)" onclick="createFunc()">Create</a>
+        <a href="/signin">Sign In</a>
       {% endif %}
-      <a href="/signin">Sign In</a>
       {% if loggedIn_status == "1" %}
         <a href="/logout">Logout</a>
       {% endif %}
@@ -84,7 +84,7 @@
                 <img  src="data:image/png;base64,{{ song.album.album_image|decodeutf8 }}" id="image-{{ song.song_name }}" ,alt="{{ song.song_name }} Image" class="card-img-top">
                 <div class="onImage-buttons">
                   <!-- <button class="play-button" onclick="togglePlayPause(this)"><i class="fa-solid fa-play fa-xl"></i></button> -->
-                  <button class="play-button"><i class="fa-solid fa-play fa-xl" id="cardPlayPause" onclick="playsong(this)"><span class="d-none">{{ song.song_name }}</span></i></button>
+                  <button class="play-button" data-bs-toggle="tooltip" data-bs-placement="top" title="Add to queue"><i class="fa-solid fa-play fa-xl" id="cardPlayPause" onclick="playsong(this)"><span class="d-none">{{ song.song_name }}</span></i></button>
                 </div>
               </div>
               <div class="card-content">
@@ -353,7 +353,7 @@
           slidesToShow: 4,
           slidesToScroll: 1,
           autoplay: true,
-          autoplaySpeed: 2000, // set the duration of the slide
+          autoplaySpeed: 3500, // set the duration of the slide
           arrows:true,
           dots:true,
           // prevArrow: '<button type="button" class="slick-prev">Previous</button>',

@@ -51,9 +51,9 @@
                         <!-- <img src="https://via.placeholder.com/300" alt="Card Image"> -->
                         <img  src="data:image/png;base64,{{ song.album.album_image|decodeutf8 }}" id="image-{{ song.song_name }}" alt="{{ song.song_name }} Image" class="card-img-top">
                         <div class="onImage-buttons">
-                            <button class="like-button" ><i class="like-icon" data-song_id="{{ song.song_id }}" onclick="toggleLike(this)"></i></button>
+                            <button class="like-button" data-bs-toggle="tooltip" data-bs-placement="top" title="Like this song"><i class="like-icon" data-song_id="{{ song.song_id }}" onclick="toggleLike(this)"></i></button>
                             <!-- <button class="play-button" onclick="playsong(this)">Play</button> -->
-                            <button class="play-button"><i class="fa-solid fa-play fa-xl" onclick="playsong(this)"><span class="d-none">{{ song.song_name }}</span></i></button>
+                            <button class="play-button" data-bs-toggle="tooltip" data-bs-placement="top" title="Add to queue"><i class="fa-solid fa-play fa-xl" onclick="playsong(this)"><span class="d-none">{{ song.song_name }}</span></i></button>
                         </div>
                     </div>
                     <div class="card-content">
