@@ -105,7 +105,7 @@ class Songs(db.Model):  #Many
     song_file = db.Column(db.BLOB,nullable=False)
     song_lyrics=db.Column(db.String,nullable=False)
     album_id = db.Column(db.String, db.ForeignKey('albums.album_id'),nullable=False)
-    duration=db.Column(db.Integer)
+    duration=db.Column(db.Integer,server_default=db.text('0'))
     song_views=db.Column(db.Integer,nullable=False,server_default=db.text('0'))
     genre=db.Column(db.String(50))
     liked=db.Column(db.Integer,nullable=False,server_default=db.text('0'))
@@ -399,15 +399,16 @@ def create(user_song_count=0):
                     return response
                 except:
                     db.session.rollback()
-                    return f"""<html>
-                            <head>
-                                <meta http-equiv="refresh" content="3;url=/create" />
-                            </head>
-                            <body>
-                                <h2> <span style="color:crimson;text-align:center;"> Changes could not be made !! </span></h2>
-                                <h4><span style="color:crimson;text-align:center;"> Redirecting you to same page in 3 seconds . </span></h4>
-                            </body>
-                            </html>""" 
+                    return render_template('redirect.html' , message="Changes could not be made !! Redirecting you to same page in 3 seconds ." , redirect_url='/create')
+                    # return f"""<html>
+                    #         <head>
+                    #             <meta http-equiv="refresh" content="3;url=/create" />
+                    #         </head>
+                    #         <body>
+                    #             <h2> <span style="color:crimson;text-align:center;"> Changes could not be made !! </span></h2>
+                    #             <h4><span style="color:crimson;text-align:center;"> Redirecting you to same page in 3 seconds . </span></h4>
+                    #         </body>
+                    #         </html>""" 
        
 
 
@@ -447,15 +448,16 @@ def playlist_songs(playlist_name=None):
                             db.session.commit()
                         except:
                             db.session.rollback()
-        return f"""<html>
-                            <head>
-                                <meta http-equiv="refresh" content="3;url=/" />
-                            </head>
-                            <body>
-                                <h2> <span style="color:crimson;text-align:center;"> Added the song to your selected playlist . </span></h2>
-                                <h4><span style="color:crimson;text-align:center;"> Redirecting you to the home page in 3 seconds . </span></h4>
-                            </body>
-                            </html>""" 
+        return render_template('redirect.html' , message="Added the song to your selected playlist . Redirecting you to the home page in 3 seconds ." , redirect_url='/')
+        # return f"""<html>
+        #                     <head>
+        #                         <meta http-equiv="refresh" content="3;url=/" />
+        #                     </head>
+        #                     <body>
+        #                         <h2> <span style="color:crimson;text-align:center;"> Added the song to your selected playlist . </span></h2>
+        #                         <h4><span style="color:crimson;text-align:center;"> Redirecting you to the home page in 3 seconds . </span></h4>
+        #                     </body>
+        #                     </html>""" 
 
 
 
@@ -469,11 +471,14 @@ def createPlaylist():
         playlist_name=request.form["playlist_name"]
         song_name=request.form['song_name-a']
         playlist_image=request.files['playlistImage']
-        image = Image.open(playlist_image)
-        playlist_image = image.resize((224,224))
-        buffered=BytesIO()
-        playlist_image.save(buffered, format="PNG")
-        playlist_image_io= base64.b64encode(buffered.getvalue())
+        if playlist_image:
+            image = Image.open(playlist_image)
+            playlist_image = image.resize((224,224))
+            buffered=BytesIO()
+            playlist_image.save(buffered, format="PNG")
+            playlist_image_io= base64.b64encode(buffered.getvalue())
+        else:
+            return render_template('redirect.html' , message="Provide Cover Image for Playlist . Cannot proceed without it ." , redirect_url='/')
         song_id=Songs.query.filter(Songs.song_name == song_name).first().song_id
         check_playlist=Playlists.query.filter(Playlists.playlist_name == playlist_name).first()
         user_id=Users.query.filter(Users.user_name == decoded_token.get("username")).first().user_id
@@ -489,26 +494,28 @@ def createPlaylist():
                     db.session.commit()
                 except:
                     db.session.rollback()
-            return f"""<html>
-                            <head>
-                                <meta http-equiv="refresh" content="3;url=/" />
-                            </head>
-                            <body>
-                                <h2> <span style="color:crimson;text-align:center;"> Added the song to your new playlist . </span></h2>
-                                <h4><span style="color:crimson;text-align:center;"> Redirecting you to the home page in 3 seconds . </span></h4>
-                            </body>
-                            </html>"""
+            return render_template('redirect.html' , message="Added the song to your new playlist . Redirecting you to the home page in 3 seconds ." , redirect_url='/')
+            # return f"""<html>
+            #                 <head>
+            #                     <meta http-equiv="refresh" content="3;url=/" />
+            #                 </head>
+            #                 <body>
+            #                     <h2> <span style="color:crimson;text-align:center;"> Added the song to your new playlist . </span></h2>
+            #                     <h4><span style="color:crimson;text-align:center;"> Redirecting you to the home page in 3 seconds . </span></h4>
+            #                 </body>
+            #                 </html>"""
         else:
-            return f"""<html>
-                            <head>
-                                # <meta http-equiv="refresh" content="3;url=/playlist_songs/{playlist_name}" />
-                                <meta http-equiv="refresh" content="3;url=/" />
-                            </head>
-                            <body>
-                                <h2> <span style="color:crimson;text-align:center;"> This Playlist name is already taken. So nothing done .Try creating playlist with a different name </span></h2>
-                                <h4><span style="color:crimson;text-align:center;"> Redirecting you to the home page in 3 seconds . </span></h4>
-                            </body>
-                            </html>"""
+            return render_template('redirect.html' , message="This Playlist name is already taken . So nothing done . Try creating playlist with a different name . Redirecting you to the home page in 3 seconds ." , redirect_url='/')
+            # return f"""<html>
+            #                 <head>
+            #                     # <meta http-equiv="refresh" content="3;url=/playlist_songs/{playlist_name}" />
+            #                     <meta http-equiv="refresh" content="3;url=/" />
+            #                 </head>
+            #                 <body>
+            #                     <h2> <span style="color:crimson;text-align:center;"> This Playlist name is already taken. So nothing done .Try creating playlist with a different name </span></h2>
+            #                     <h4><span style="color:crimson;text-align:center;"> Redirecting you to the home page in 3 seconds . </span></h4>
+            #                 </body>
+            #                 </html>"""
             
 
 
@@ -530,15 +537,16 @@ def delete_Song():
                 db.session.commit()
             except:
                  db.session.rollback()
-        return f"""<html>
-                            <head>
-                                <meta http-equiv="refresh" content="3;url=/playlist_songs/{playlist_name}" />
-                            </head>
-                            <body>
-                                <h2> <span style="color:crimson;text-align:center;"> Song deleted from the playlist . </span></h2>
-                                <h4><span style="color:crimson;text-align:center;"> Redirecting you to the playlist page in 3 seconds . </span></h4>
-                            </body>
-                            </html>""" 
+        return render_template('redirect.html' , message="Song deleted from the playlist . Redirecting you to the playlist page in 3 seconds ." , redirect_url='/playlist_songs/'+playlist_name)
+        # return f"""<html>
+        #                     <head>
+        #                         <meta http-equiv="refresh" content="3;url=/playlist_songs/{playlist_name}" />
+        #                     </head>
+        #                     <body>
+        #                         <h2> <span style="color:crimson;text-align:center;"> Song deleted from the playlist . </span></h2>
+        #                         <h4><span style="color:crimson;text-align:center;"> Redirecting you to the playlist page in 3 seconds . </span></h4>
+        #                     </body>
+        #                     </html>""" 
     
 
 
@@ -572,15 +580,21 @@ def creator_upload():
     genre=request.form['genre']
     duration=request.form['duration']
     audio_file = request.files['songFile']
-    audio_file_io= base64.b64encode(BytesIO(audio_file.read()).getvalue())
+    if audio_file:
+        audio_file_io= base64.b64encode(BytesIO(audio_file.read()).getvalue())
+    else:
+        return render_template('redirect.html' , message="Provide an audio file . Cannot proceed without an audio file ." , redirect_url='/create')
     album_image=request.files['albumImage']
-    if album_image:
-        image = Image.open(album_image)
-        album_image = image.resize((224,224))
-        buffered = BytesIO()
-        album_image.save(buffered, format="PNG")
-        album_image_io= base64.b64encode(buffered.getvalue())
     check_albumName=Albums.query.filter(Albums.album_name == album_name).first()
+    if check_albumName is None:
+        if album_image:
+            image = Image.open(album_image)
+            album_image = image.resize((224,224))
+            buffered = BytesIO()
+            album_image.save(buffered, format="PNG")
+            album_image_io= base64.b64encode(buffered.getvalue())
+        else:
+            return render_template('redirect.html' , message="Provide Cover Image for Album . Cannot proceed without it ." , redirect_url='/create')
     if check_albumName is not None:
         # print(base64.b64encode(image_file_io.getvalue()),"--------------------------------------------------------------------")
         try:
@@ -589,15 +603,16 @@ def creator_upload():
             db.session.commit()
         except:
             db.session.rollback()
-        return f"""<html>
-                            <head>
-                                <meta http-equiv="refresh" content="3;url=/create" />
-                            </head>
-                            <body>
-                                <h2> <span style="color:crimson;text-align:center;"> Song added to the {album_name} which alredy exists . </span></h2>
-                                <h4><span style="color:crimson;text-align:center;"> Redirecting you to the create page in 3 seconds . </span></h4>
-                            </body>
-                            </html>""" 
+        return render_template('redirect.html' , message="Song added to the album : "+album_name+" which alredy exists . Redirecting you to the create page in 3 seconds ." , redirect_url='/create')
+        # return f"""<html>
+        #                     <head>
+        #                         <meta http-equiv="refresh" content="3;url=/create" />
+        #                     </head>
+        #                     <body>
+        #                         <h2> <span style="color:crimson;text-align:center;"> Song added to the {album_name} which alredy exists . </span></h2>
+        #                         <h4><span style="color:crimson;text-align:center;"> Redirecting you to the create page in 3 seconds . </span></h4>
+        #                     </body>
+        #                     </html>""" 
     else:
         try:
             new_album=Albums(album_id=gen_uuid(), album_name=album_name,album_image=album_image_io,album_owner_id=creator_userid)
@@ -608,16 +623,17 @@ def creator_upload():
             db.session.commit()
         except:
             db.session.rollback()
-        return f"""<html>
-                            <head>
+        return render_template('redirect.html' , message="Creating a new album with the name as "+{album_name}+" and adding the song into it . Redirecting you to the create page in 3 seconds ." , redirect_url='/create')
+        # return f"""<html>
+        #                     <head>
                                 
-                                <meta http-equiv="refresh" content="3;url=/create" />
-                            </head>
-                            <body>
-                                <h2> <span style="color:crimson;text-align:center;"> Creating a new album with the name as {album_name} and adding the song into it . </span></h2>
-                                <h4><span style="color:crimson;text-align:center;"> Redirecting you to the create page in 3 seconds . </span></h4>
-                            </body>
-                            </html>"""
+        #                         <meta http-equiv="refresh" content="3;url=/create" />
+        #                     </head>
+        #                     <body>
+        #                         <h2> <span style="color:crimson;text-align:center;"> Creating a new album with the name as {album_name} and adding the song into it . </span></h2>
+        #                         <h4><span style="color:crimson;text-align:center;"> Redirecting you to the create page in 3 seconds . </span></h4>
+        #                     </body>
+        #                     </html>"""
 
 
  
@@ -650,16 +666,17 @@ def creator_song_delete():
 
         except:
             db.session.rollback()
-    return f"""<html>
-                            <head>
+    return render_template('redirect.html' , message="Song deleted from the album . If any user-playlists contain this song then the song will be deleted from those playlists also . Redirecting you to the create page in 3 seconds ." , redirect_url='/create')
+    # return f"""<html>
+    #                         <head>
                                 
-                                <meta http-equiv="refresh" content="3;url=/create" />
-                            </head>
-                            <body>
-                                <h2> <span style="color:crimson;text-align:center;"> Song deleted from album . If any user-playlists contain this song then the song will be deleted from those playlists also .  </span></h2>
-                                <h4><span style="color:crimson;text-align:center;"> Redirecting you to the create page in 3 seconds . </span></h4>
-                            </body>
-                            </html>"""
+    #                             <meta http-equiv="refresh" content="3;url=/create" />
+    #                         </head>
+    #                         <body>
+    #                             <h2> <span style="color:crimson;text-align:center;"> Song deleted from album . If any user-playlists contain this song then the song will be deleted from those playlists also .  </span></h2>
+    #                             <h4><span style="color:crimson;text-align:center;"> Redirecting you to the create page in 3 seconds . </span></h4>
+    #                         </body>
+    #                         </html>"""
     
 
 
@@ -689,16 +706,17 @@ def creator_song_edit(song_id):
             db.session.commit()
         except:
             db.session.rollback()
-    return f"""<html>
-                            <head>
+    return render_template('redirect.html' , message="Song details updated . Redirecting you to the create page in 3 seconds ." , redirect_url='/create')
+    # return f"""<html>
+    #                         <head>
                                 
-                                <meta http-equiv="refresh" content="3;url=/create" />
-                            </head>
-                            <body>
-                                <h2> <span style="color:crimson;text-align:center;"> Song details updated . </span></h2>
-                                <h4><span style="color:crimson;text-align:center;"> Redirecting you to the create page in 3 seconds . </span></h4>
-                            </body>
-                            </html>""" 
+    #                             <meta http-equiv="refresh" content="3;url=/create" />
+    #                         </head>
+    #                         <body>
+    #                             <h2> <span style="color:crimson;text-align:center;"> Song details updated . </span></h2>
+    #                             <h4><span style="color:crimson;text-align:center;"> Redirecting you to the create page in 3 seconds . </span></h4>
+    #                         </body>
+    #                         </html>""" 
 
 
 
@@ -721,16 +739,17 @@ def user_rating():
                 db.session.commit()
             except:
                 db.session.rollback()
-            return f"""<html>
-                            <head>
+            return  render_template('redirect.html' , message="Rating of the song updated . Redirecting you to the same page in 3 seconds ." , redirect_url='/album_songs/'+album_name)
+            # return f"""<html>
+            #                 <head>
                                 
-                                <meta http-equiv="refresh" content="3;url=/album_songs/{album_name}" />
-                            </head>
-                            <body>
-                                <h2> <span style="color:crimson;text-align:center;"> Rating of the song updated </span></h2>
-                                <h4><span style="color:crimson;text-align:center;"> Redirecting you to the album page in 3 seconds . </span></h4>
-                            </body>
-                            </html>""" 
+            #                     <meta http-equiv="refresh" content="3;url=/album_songs/{album_name}" />
+            #                 </head>
+            #                 <body>
+            #                     <h2> <span style="color:crimson;text-align:center;"> Rating of the song updated </span></h2>
+            #                     <h4><span style="color:crimson;text-align:center;"> Redirecting you to the album page in 3 seconds . </span></h4>
+            #                 </body>
+            #                 </html>""" 
         else:
             try:
                 new=User_likes_ratings(user_id=user_id,song_id=song_id,song_rating=rating)
@@ -738,16 +757,17 @@ def user_rating():
                 db.session.commit()
             except:
                 db.session.rollback()
-            return f"""<html>
-                            <head>
+            return render_template('redirect.html' , message="Thank you for rating the song . Redirecting you to the same page in 3 seconds ." , redirect_url='/album_songs/'+album_name)
+            # return f"""<html>
+            #                 <head>
                                 
-                                <meta http-equiv="refresh" content="3;url=/album_songs/{album_name}" />
-                            </head>
-                            <body>
-                                <h2> <span style="color:crimson;text-align:center;"> Thank you for rating the song </span></h2>
-                                <h4><span style="color:crimson;text-align:center;"> Redirecting you to the album page in 3 seconds . </span></h4>
-                            </body>
-                            </html>"""
+            #                     <meta http-equiv="refresh" content="3;url=/album_songs/{album_name}" />
+            #                 </head>
+            #                 <body>
+            #                     <h2> <span style="color:crimson;text-align:center;"> Thank you for rating the song </span></h2>
+            #                     <h4><span style="color:crimson;text-align:center;"> Redirecting you to the album page in 3 seconds . </span></h4>
+            #                 </body>
+            #                 </html>"""
 
 
 
@@ -910,25 +930,27 @@ def admin_signin():
                 response.set_cookie("token",new_token)
                 return response
             else:
-                return f"""<html>
-                        <head>
-                            <meta http-equiv="refresh" content="3;url=/admin_signin" />
-                        </head>
-                        <body>
-                            <h2> <span style="color:crimson;text-align:center;">Admin Password Incorect !! </span></h2>
-                            <h4><span style="color:crimson;text-align:center;"> Redirecting you to same admin signin page in 3 seconds . Please Retry . </span></h4>
-                        </body>
-                        </html>"""
+                return render_template('redirect.html' , message="Admin Password Incorect !! Redirecting you to same admin signin page in 3 seconds . Please Retry ." , redirect_url='/admin_signin')
+                # return f"""<html>
+                #         <head>
+                #             <meta http-equiv="refresh" content="3;url=/admin_signin" />
+                #         </head>
+                #         <body>
+                #             <h2> <span style="color:crimson;text-align:center;">Admin Password Incorect !! </span></h2>
+                #             <h4><span style="color:crimson;text-align:center;"> Redirecting you to same admin signin page in 3 seconds . Please Retry . </span></h4>
+                #         </body>
+                        # </html>"""
         else:
-            return f"""<html>
-                        <head>
-                            <meta http-equiv="refresh" content="3;url=/" />
-                        </head>
-                        <body>
-                            <h2> <span style="color:crimson;text-align:center;">No admin with the given username found  !! </span></h2>
-                            <h4><span style="color:crimson;text-align:center;"> Redirecting you to home page in 3 seconds . </h4>
-                        </body>
-                        </html>"""
+            return render_template('redirect.html' , message="No admin with the given username found  !! Redirecting you to home page in 3 seconds ." , redirect_url='/')
+            # return f"""<html>
+            #             <head>
+            #                 <meta http-equiv="refresh" content="3;url=/" />
+            #             </head>
+            #             <body>
+            #                 <h2> <span style="color:crimson;text-align:center;">No admin with the given username found  !! </span></h2>
+            #                 <h4><span style="color:crimson;text-align:center;"> Redirecting you to home page in 3 seconds . </h4>
+            #             </body>
+            #             </html>"""
 
 
 
@@ -1059,16 +1081,17 @@ def admin_song_delete():
             db.session.commit()
         except:
             db.session.rollback()
-    return f"""<html>
-                            <head>
+    return render_template('redirect.html' , message="Song deleted . If any user-playlists contain this song then the song will be deleted from those playlists also . Redirecting you to the Admin Home page in 3 seconds ." , redirect_url='/admin_index')
+    # return f"""<html>
+    #                         <head>
                                 
-                                <meta http-equiv="refresh" content="5;url=/admin_index" />
-                            </head>
-                            <body>
-                                <h2> <span style="color:crimson;text-align:center;"> Song deleted . If any user-playlists contain this song then the song will be deleted from those playlists also .  </span></h2>
-                                <h4><span style="color:crimson;text-align:center;"> Redirecting you to the Admin Home page in 5 seconds . </span></h4>
-                            </body>
-                            </html>"""
+    #                             <meta http-equiv="refresh" content="5;url=/admin_index" />
+    #                         </head>
+    #                         <body>
+    #                             <h2> <span style="color:crimson;text-align:center;"> Song deleted . If any user-playlists contain this song then the song will be deleted from those playlists also .  </span></h2>
+    #                             <h4><span style="color:crimson;text-align:center;"> Redirecting you to the Admin Home page in 5 seconds . </span></h4>
+    #                         </body>
+    #                         </html>"""
 
 
 
@@ -1096,16 +1119,17 @@ def admin_album_delete():
                 db.session.commit()
         db.session.delete(album)
         db.session.commit()
-    return f"""<html>
-                            <head>
+    return render_template('redirect.html' , message="Album deleted . Songs of the album also deleted . If any user-playlists contain these song then the songs will be deleted from those playlists also . Redirecting you to the Admin Home page in 3 seconds ." , redirect_url='/admin_index')
+    # return f"""<html>
+    #                         <head>
                                 
-                                <meta http-equiv="refresh" content="5;url=/admin_index" />
-                            </head>
-                            <body>
-                                <h2> <span style="color:crimson;text-align:center;"> Album deleted . Songs of the album also deleted . If any user-playlists contain these song then the songs will be deleted from those playlists also .  </span></h2>
-                                <h4><span style="color:crimson;text-align:center;"> Redirecting you to the Admin Home page in 5 seconds . </span></h4>
-                            </body>
-                            </html>"""
+    #                             <meta http-equiv="refresh" content="5;url=/admin_index" />
+    #                         </head>
+    #                         <body>
+    #                             <h2> <span style="color:crimson;text-align:center;"> Album deleted . Songs of the album also deleted . If any user-playlists contain these song then the songs will be deleted from those playlists also .  </span></h2>
+    #                             <h4><span style="color:crimson;text-align:center;"> Redirecting you to the Admin Home page in 5 seconds . </span></h4>
+    #                         </body>
+    #                         </html>"""
 
       
 

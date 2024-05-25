@@ -39,7 +39,7 @@ class Songs(db.Model):  #Many
     song_file = db.Column(db.BLOB,nullable=False)
     song_lyrics=db.Column(db.String,nullable=False)
     album_id = db.Column(db.String, db.ForeignKey('albums.album_id'),nullable=False)
-    duration=db.Column(db.Integer)
+    duration=db.Column(db.Integer,server_default=db.text('0'))
     song_views=db.Column(db.Integer,nullable=False,server_default=db.text('0'))
     genre=db.Column(db.String(50))
     liked=db.Column(db.Integer,nullable=False,server_default=db.text('0'))
