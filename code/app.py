@@ -11,7 +11,7 @@ import jwt
 from PIL import Image
 
 from flask_sqlalchemy import SQLAlchemy
-from werkzeug.security import generate_password_hash,check_password_hash
+# from werkzeug.security import generate_password_hash,check_password_hash
 import base64
 from io import BytesIO
 import json
@@ -26,16 +26,27 @@ app=Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI']="sqlite:///"+os.path.join(current_dir,"music.db")
 db = SQLAlchemy()
 db.init_app(app)
-with open('C:\ONE DRIVE ROHITH\OneDrive\Documents\music_streaming\code\secret.json') as config_file2:
+
+
+with open('C:\ONE DRIVE ROHITH\OneDrive\Documents\music_streaming\code\paths.json') as config_file3:
+    paths = json.load(config_file3)
+
+
+with open(paths['secret']) as config_file2:
      secrets = json.load(config_file2)
 app.secret_key = secrets['google_secret']
 app.config['SECRET_KEY'] = secrets['webtoken_secret']
 
+
+
+
 # app.app_context().push()
 
 
+
+
 #OAuth
-with open('C:\ONE DRIVE ROHITH\OneDrive\Documents\music_streaming\code\client_secret_229198823021-k3j7djkj9qirc80en4goanaj3k24m33q.apps.googleusercontent.com.json') as config_file:
+with open(paths["OAuth"]) as config_file:
     config = json.load(config_file)
 
 oauth = OAuth(app)
@@ -133,7 +144,7 @@ class User_likes_ratings(db.Model):
 
 
 
-with open('C:\ONE DRIVE ROHITH\OneDrive\Documents\music_streaming\code\\admin.json') as config_file1:
+with open(paths['admin']) as config_file1:
     admin_dict = json.load(config_file1)
 
 

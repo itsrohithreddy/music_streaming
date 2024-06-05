@@ -2,7 +2,8 @@ myvenv/
 *.log
 *.pdf
 code/music.db
-code/client_secret_229198823021-k3j7djkj9qirc80en4goanaj3k24m33q.apps.googleusercontent.com.json
+code/client_secret_260570729620-cm930ikv4gpb79i4mqg3sfi5hagls4j9.apps.googleusercontent.com.json
 code/admin.json
 code/test.py
 code/secret.json
+code/paths.json
