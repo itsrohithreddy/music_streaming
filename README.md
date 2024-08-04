@@ -5,8 +5,8 @@ Welcome to the Music Streaming Web Application! This application allows users to
 ## Features
 
 ### User Management
-- **Authentication:** Users can sign up for an account or log in with their existing credentials.
-- **Role-based Access Control:** Different roles such as admin and user are available, each with its own set of permissions.
+- **Authorization:** Implemented Google's OAuth for secure logins.
+- **Role-based Access Control:** Different roles such as admin , user and creator are available, each with its own set of permissions.
 
 ### Music Management
 - **Upload Songs and Albums:** Users can upload their favorite songs and albums to the platform.
@@ -23,7 +23,6 @@ Welcome to the Music Streaming Web Application! This application allows users to
 
 - **Flask:** Flask is a lightweight web framework for Python, used for building web applications.
 - **Flask-SQLAlchemy:** Flask-SQLAlchemy is an extension for Flask that adds support for SQLAlchemy, a powerful SQL toolkit and Object-Relational Mapper (ORM).
-- **Werkzeug:** Werkzeug is a WSGI utility library for Python, providing various utilities for building web applications.
 
 ## Setup
 
@@ -31,25 +30,19 @@ Follow the steps below to set up and run the Music Streaming Web Application on 
 
 
 1. Clone the repository:
-   git clone https://github.com/slvarun/Music-streaming-App.git
+   git clone https://github.com/itsrohithreddy/music_streaming
 
 
 2. Install dependencies:
    pip install -r requirements.txt
 
-3. Run the db.py file to initialize the database with all the db classes:
+3. Run the db.py file to initialize the database with the tables required:
    python db.py
 
 4. Run the application:
    python app.py
 
 5. Access the application in your web browser at [http://localhost:5000](http://localhost:5000).
-
-## Contributors
-
-- M.Varun
-- G.Rohith reddy
-- A.Sai Tharun
 
 
 
