@@ -5,7 +5,6 @@ from flask import request
 from flask import url_for
 from flask import make_response,redirect
 from flask import render_template
-from flask import make_response
 from flask import jsonify
 import jwt
 from PIL import Image
