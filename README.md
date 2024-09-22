@@ -30,17 +30,25 @@ Follow the steps below to set up and run the Music Streaming Web Application on 
 
 
 1. Clone the repository:
+   ```bash
    git clone https://github.com/itsrohithreddy/music_streaming
+   ```
 
 
 2. Install dependencies:
+   ```bash
    pip install -r requirements.txt
+   ```
 
 3. Run the db.py file by navigating to `code` directory . This initializes the database with the tables required:
+   ```bash
    python db.py
+   ```
 
 4. Run the application(present within the `code` directory):
+   ```bash
    python app.py
+   ```
 
 5. Access the application in your web browser at [http://localhost:5000](http://localhost:5000).
 
