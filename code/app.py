@@ -1,22 +1,22 @@
 import os
 import uuid
+import json
+import jwt
+import base64
+from datetime import datetime, timedelta, timezone
 from flask import Flask , session
 from flask import request
 from flask import url_for
 from flask import make_response,redirect
 from flask import render_template
 from flask import jsonify
-import jwt
+from functools import wraps
 from PIL import Image
 
 from flask_sqlalchemy import SQLAlchemy
-# from werkzeug.security import generate_password_hash,check_password_hash
-import base64
 from io import BytesIO
-import json
 
-
-from flask_oauthlib.client import OAuth
+from authlib.integrations.flask_client import OAuth
 
 
 
@@ -33,9 +33,8 @@ with open('C:\ONE DRIVE ROHITH\OneDrive\Documents\music_streaming\code\paths.jso
 
 with open(paths['secret']) as config_file2:
      secrets = json.load(config_file2)
-app.secret_key = secrets['google_secret']
-app.config['SECRET_KEY'] = secrets['webtoken_secret']
-
+app.secret_key = secrets['google_secret']   #For Google OAuth
+app.config['SECRET_KEY'] = secrets['jwtwebtoken_secret']   #For JWT Token
 
 
 
@@ -49,17 +48,14 @@ with open(paths["OAuth"]) as config_file:
     config = json.load(config_file)
 
 oauth = OAuth(app)
-google = oauth.remote_app(
+google = oauth.register(
     'google',
-    consumer_key=config['web']['client_id'],
-    consumer_secret=config['web']['client_secret'],
-    request_token_params={
-        'scope': 'email profile',
-    },
-    base_url=config['web']['auth_provider_x509_cert_url'],
-    access_token_method='POST',
+    client_id=config['web']['client_id'],
+    client_secret=config['web']['client_secret'],
     access_token_url=config['web']['token_uri'],
-    authorize_url=config['web']['auth_uri']
+    authorize_url=config['web']['auth_uri'],
+    api_base_url='https://www.googleapis.com/oauth2/v1/',
+    client_kwargs={'scope': 'email profile'},
 )
 
 
@@ -149,6 +145,43 @@ with open(paths['admin']) as config_file1:
 
 
 
+#Custom decorator
+def check_loggedIn_jwt_expiration(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        token = request.cookies.get('token')
+
+        if not token:
+            # If no token is found, redirect or return an error response
+            return jsonify({"message": "Token is missing!"}), 403
+
+        try:
+            # Decode the token
+            
+            decoded_token = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
+            return f(*args, **kwargs)
+            # elif decoded_token.get("loggedIn") == 0:
+            #     # If not logged in return a message useful in case of api calls
+            #     return jsonify({"message": "Unauthorized user!!!!"}), 401
+                
+
+        except jwt.ExpiredSignatureError:
+            # If token has expired (based on 'exp' claim)
+            session.pop('google_token', None)
+            response = make_response(redirect("/"))
+            response.set_cookie('token', '',expires=0)  # Clear the token cookie
+            return response
+            # return jsonify({"message": "Token has expired!"}), 401
+
+        except jwt.InvalidTokenError:
+            # If the token is invalid
+            return jsonify({"message": "Invalid token!"}), 403
+
+    return decorated_function
+
+
+
+
 
 
 @app.route('/',methods=['GET'])
@@ -163,7 +196,7 @@ def home():
             'loggedIn':"0",
             'pic_url':"",
             'admin' : "0",
-            'admin_u' : ""
+            'admin_u' : "",
         }
         token = jwt.encode(token_payload, app.config['SECRET_KEY'], algorithm='HS256')
         response = make_response(redirect("/"))
@@ -190,19 +223,15 @@ def home():
 
 
 
-@google.tokengetter
-def get_google_oauth_token():
-    return session.get('google_token')
-
-
 
 @app.route('/signin')
 def login():
     # print(dir(google) )
-    # print(google._tokentgetter)
-    return google.authorize(callback=url_for('authorized', _external=True))
+    redirect_uri = url_for('authorized', _external=True)
+    return google.authorize_redirect(redirect_uri)
 
 @app.route('/logout')
+@check_loggedIn_jwt_expiration
 def logout():
     session.pop('google_token', None)
     decoded_token = jwt.decode(request.cookies.get('token'), app.config['SECRET_KEY'], algorithms=['HS256'])
@@ -210,7 +239,10 @@ def logout():
     decoded_token["username"] = ""
     decoded_token["name"] = ""
     decoded_token["pic_url"] = ""
-    decoded_token[""] = ""
+    decoded_token['role']= ""
+    decoded_token['admin']= "0"
+    decoded_token['admin_u'] = ""
+    decoded_token.pop('exp')
     new_token = jwt.encode(decoded_token, app.config['SECRET_KEY'], algorithm='HS256')
     response = make_response(redirect("/"))
     response.set_cookie("token",new_token)
@@ -218,7 +250,7 @@ def logout():
 
 @app.route('/signin/callback')
 def authorized():
-    resp = google.authorized_response()
+    resp = google.authorize_access_token()
     # print("Response : ",resp)
     if resp is None or resp.get('access_token') is None:
         return 'Access denied: reason=%s error=%s' % (
@@ -230,13 +262,14 @@ def authorized():
     # print("Session : ",session)
     # print("Token Getter : ",google.tokengetter)
     user_info = google.get('userinfo')
-    # print("User Info : ",user_info.data.keys())
-    # print('Logged in with id :  ' , user_info.data['id']," Email : ",user_info.data['email'] ," Verified_Email : ",user_info.data['verified_email'] ," Name : ",user_info.data['name'] , " Given name : ",user_info.data['given_name'], " Family Name : ",user_info.data['family_name'], " Picture : ",user_info.data['picture'])
-    username_mailid = user_info.data['email']
-    first_name = user_info.data['given_name']
-    last_name = user_info.data['family_name']
-    name = user_info.data['name']
-    picture = user_info.data['picture']
+    # print("User Info : ",user_info)
+    user_data = user_info.json()  # Use .json() to get the data as a dictionary
+    # print('Logged in with id :  ' , user_data.get('email')," Name : ",user_data.get('name') , " Given name : ",user_data.get('given_name'), " Family Name : ",user_data.get('family_name'), " Picture : ",user_data.get('picture'))
+    username_mailid = user_data.get('email')
+    first_name = user_data.get('given_name')
+    last_name = user_data.get('family_name')
+    name = user_data.get('name')
+    picture = user_data.get('picture')
     user_check=Users.query.filter(Users.user_name == username_mailid).first()
 
     if user_check:
@@ -259,6 +292,7 @@ def authorized():
             decoded_token["role"] = "creator"
         else:
             decoded_token["role"] = "user"
+        decoded_token["exp"] = datetime.now(timezone.utc) + timedelta(hours=1)
         new_token = jwt.encode(decoded_token, app.config['SECRET_KEY'], algorithm='HS256')
         response = make_response(redirect("/"))
         response.set_cookie("token",new_token)
@@ -278,6 +312,7 @@ def authorized():
         decoded_token["name"] = name
         decoded_token["role"] = "user"
         decoded_token["pic_url"] = picture
+        decoded_token["exp"] = datetime.now(timezone.utc) + timedelta(hours=1)
         new_token = jwt.encode(decoded_token, app.config['SECRET_KEY'], algorithm='HS256')
         response = make_response(redirect("/"))
         response.set_cookie("token",new_token)
@@ -375,6 +410,7 @@ def authorized():
 
 
 @app.route('/create',methods=['GET','POST'])
+@check_loggedIn_jwt_expiration
 def create(user_song_count=0):
     decoded_token = jwt.decode(request.cookies.get('token'), app.config['SECRET_KEY'], algorithms=['HS256'])
     if decoded_token.get("loggedIn") == "1" and decoded_token.get("role") == "creator":
@@ -429,6 +465,7 @@ def create(user_song_count=0):
 
 @app.route('/playlist_songs/',methods=['POST'])   # To add songs to a playlist
 @app.route('/playlist_songs/<string:playlist_name>',methods=['GET'])   # To display songs in a playlist
+@check_loggedIn_jwt_expiration
 def playlist_songs(playlist_name=None):
     decoded_token = jwt.decode(request.cookies.get('token'), app.config['SECRET_KEY'], algorithms=['HS256'])
     if request.method=='GET' and playlist_name is not None:
@@ -459,15 +496,7 @@ def playlist_songs(playlist_name=None):
                         except:
                             db.session.rollback()
         return render_template('redirect.html' , message="Added the song to your selected playlist . Redirecting you to the home page in 3 seconds ." , redirect_url='/')
-        # return f"""<html>
-        #                     <head>
-        #                         <meta http-equiv="refresh" content="3;url=/" />
-        #                     </head>
-        #                     <body>
-        #                         <h2> <span style="color:crimson;text-align:center;"> Added the song to your selected playlist . </span></h2>
-        #                         <h4><span style="color:crimson;text-align:center;"> Redirecting you to the home page in 3 seconds . </span></h4>
-        #                     </body>
-        #                     </html>""" 
+         
 
 
 
@@ -475,6 +504,7 @@ def playlist_songs(playlist_name=None):
 
 
 @app.route('/playlist_create',methods=["POST"])  # To create a playlist 
+@check_loggedIn_jwt_expiration
 def createPlaylist():
     decoded_token = jwt.decode(request.cookies.get('token'), app.config['SECRET_KEY'], algorithms=['HS256'])
     if request.method=='POST':
@@ -505,27 +535,9 @@ def createPlaylist():
                 except:
                     db.session.rollback()
             return render_template('redirect.html' , message="Added the song to your new playlist . Redirecting you to the home page in 3 seconds ." , redirect_url='/')
-            # return f"""<html>
-            #                 <head>
-            #                     <meta http-equiv="refresh" content="3;url=/" />
-            #                 </head>
-            #                 <body>
-            #                     <h2> <span style="color:crimson;text-align:center;"> Added the song to your new playlist . </span></h2>
-            #                     <h4><span style="color:crimson;text-align:center;"> Redirecting you to the home page in 3 seconds . </span></h4>
-            #                 </body>
-            #                 </html>"""
+            
         else:
             return render_template('redirect.html' , message="This Playlist name is already taken . So nothing done . Try creating playlist with a different name . Redirecting you to the home page in 3 seconds ." , redirect_url='/')
-            # return f"""<html>
-            #                 <head>
-            #                     # <meta http-equiv="refresh" content="3;url=/playlist_songs/{playlist_name}" />
-            #                     <meta http-equiv="refresh" content="3;url=/" />
-            #                 </head>
-            #                 <body>
-            #                     <h2> <span style="color:crimson;text-align:center;"> This Playlist name is already taken. So nothing done .Try creating playlist with a different name </span></h2>
-            #                     <h4><span style="color:crimson;text-align:center;"> Redirecting you to the home page in 3 seconds . </span></h4>
-            #                 </body>
-            #                 </html>"""
             
 
 
@@ -533,6 +545,7 @@ def createPlaylist():
 
 
 @app.route('/deleteSong',methods=['POST'])  #To delete song from playlist
+@check_loggedIn_jwt_expiration
 def delete_Song():
     if request.method=='POST':
         playlist_name=request.form['playlist_name']
@@ -548,15 +561,6 @@ def delete_Song():
             except:
                  db.session.rollback()
         return render_template('redirect.html' , message="Song deleted from the playlist . Redirecting you to the playlist page in 3 seconds ." , redirect_url='/playlist_songs/'+playlist_name)
-        # return f"""<html>
-        #                     <head>
-        #                         <meta http-equiv="refresh" content="3;url=/playlist_songs/{playlist_name}" />
-        #                     </head>
-        #                     <body>
-        #                         <h2> <span style="color:crimson;text-align:center;"> Song deleted from the playlist . </span></h2>
-        #                         <h4><span style="color:crimson;text-align:center;"> Redirecting you to the playlist page in 3 seconds . </span></h4>
-        #                     </body>
-        #                     </html>""" 
     
 
 
@@ -565,6 +569,7 @@ def delete_Song():
 
 
 @app.route('/album_songs/<string:album_name>',methods=['GET'])    # To dispaly songs in an albumn
+@check_loggedIn_jwt_expiration
 def album_songs(album_name=None):
     decoded_token = jwt.decode(request.cookies.get('token'), app.config['SECRET_KEY'], algorithms=['HS256'])
     if request.method=='GET'and album_name is not None:
@@ -580,6 +585,7 @@ def album_songs(album_name=None):
 
 
 @app.route('/creator_upload',methods=['POST'])
+@check_loggedIn_jwt_expiration
 def creator_upload():
     song_name=request.form['songName']
     creator_username=request.form['userName']
@@ -614,15 +620,7 @@ def creator_upload():
         except:
             db.session.rollback()
         return render_template('redirect.html' , message="Song added to the album : "+album_name+" which alredy exists . Redirecting you to the create page in 3 seconds ." , redirect_url='/create')
-        # return f"""<html>
-        #                     <head>
-        #                         <meta http-equiv="refresh" content="3;url=/create" />
-        #                     </head>
-        #                     <body>
-        #                         <h2> <span style="color:crimson;text-align:center;"> Song added to the {album_name} which alredy exists . </span></h2>
-        #                         <h4><span style="color:crimson;text-align:center;"> Redirecting you to the create page in 3 seconds . </span></h4>
-        #                     </body>
-        #                     </html>""" 
+        
     else:
         try:
             new_album=Albums(album_id=gen_uuid(), album_name=album_name,album_image=album_image_io,album_owner_id=creator_userid)
@@ -634,23 +632,13 @@ def creator_upload():
         except:
             db.session.rollback()
         return render_template('redirect.html' , message="Creating a new album with the name as "+{album_name}+" and adding the song into it . Redirecting you to the create page in 3 seconds ." , redirect_url='/create')
-        # return f"""<html>
-        #                     <head>
-                                
-        #                         <meta http-equiv="refresh" content="3;url=/create" />
-        #                     </head>
-        #                     <body>
-        #                         <h2> <span style="color:crimson;text-align:center;"> Creating a new album with the name as {album_name} and adding the song into it . </span></h2>
-        #                         <h4><span style="color:crimson;text-align:center;"> Redirecting you to the create page in 3 seconds . </span></h4>
-        #                     </body>
-        #                     </html>"""
-
 
  
 
 
 
 @app.route('/creator_song_delete',methods=['POST'])
+@check_loggedIn_jwt_expiration
 def creator_song_delete():
     song_name=request.form["songName-d"]
     
@@ -677,22 +665,13 @@ def creator_song_delete():
         except:
             db.session.rollback()
     return render_template('redirect.html' , message="Song deleted from the album . If any user-playlists contain this song then the song will be deleted from those playlists also . Redirecting you to the create page in 3 seconds ." , redirect_url='/create')
-    # return f"""<html>
-    #                         <head>
-                                
-    #                             <meta http-equiv="refresh" content="3;url=/create" />
-    #                         </head>
-    #                         <body>
-    #                             <h2> <span style="color:crimson;text-align:center;"> Song deleted from album . If any user-playlists contain this song then the song will be deleted from those playlists also .  </span></h2>
-    #                             <h4><span style="color:crimson;text-align:center;"> Redirecting you to the create page in 3 seconds . </span></h4>
-    #                         </body>
-    #                         </html>"""
     
 
 
 
 
 @app.route('/creator_song_edit/<string:song_id>',methods=['POST'])
+@check_loggedIn_jwt_expiration
 def creator_song_edit(song_id):
     song_name=request.form["songName-e"]
     lyrics=request.form["lyrics-e"]
@@ -717,22 +696,14 @@ def creator_song_edit(song_id):
         except:
             db.session.rollback()
     return render_template('redirect.html' , message="Song details updated . Redirecting you to the create page in 3 seconds ." , redirect_url='/create')
-    # return f"""<html>
-    #                         <head>
-                                
-    #                             <meta http-equiv="refresh" content="3;url=/create" />
-    #                         </head>
-    #                         <body>
-    #                             <h2> <span style="color:crimson;text-align:center;"> Song details updated . </span></h2>
-    #                             <h4><span style="color:crimson;text-align:center;"> Redirecting you to the create page in 3 seconds . </span></h4>
-    #                         </body>
-    #                         </html>""" 
+    
 
 
 
 
 # For user to rate a song from the album_songs 
 @app.route('/user_rateSong',methods=['POST'])
+@check_loggedIn_jwt_expiration
 def user_rating():
     decoded_token = jwt.decode(request.cookies.get('token'), app.config['SECRET_KEY'], algorithms=['HS256'])
     if request.method=='POST':
@@ -750,16 +721,6 @@ def user_rating():
             except:
                 db.session.rollback()
             return  render_template('redirect.html' , message="Rating of the song updated . Redirecting you to the same page in 3 seconds ." , redirect_url='/album_songs/'+album_name)
-            # return f"""<html>
-            #                 <head>
-                                
-            #                     <meta http-equiv="refresh" content="3;url=/album_songs/{album_name}" />
-            #                 </head>
-            #                 <body>
-            #                     <h2> <span style="color:crimson;text-align:center;"> Rating of the song updated </span></h2>
-            #                     <h4><span style="color:crimson;text-align:center;"> Redirecting you to the album page in 3 seconds . </span></h4>
-            #                 </body>
-            #                 </html>""" 
         else:
             try:
                 new=User_likes_ratings(user_id=user_id,song_id=song_id,song_rating=rating)
@@ -768,21 +729,13 @@ def user_rating():
             except:
                 db.session.rollback()
             return render_template('redirect.html' , message="Thank you for rating the song . Redirecting you to the same page in 3 seconds ." , redirect_url='/album_songs/'+album_name)
-            # return f"""<html>
-            #                 <head>
-                                
-            #                     <meta http-equiv="refresh" content="3;url=/album_songs/{album_name}" />
-            #                 </head>
-            #                 <body>
-            #                     <h2> <span style="color:crimson;text-align:center;"> Thank you for rating the song </span></h2>
-            #                     <h4><span style="color:crimson;text-align:center;"> Redirecting you to the album page in 3 seconds . </span></h4>
-            #                 </body>
-            #                 </html>"""
+            
 
 
 
 # Get the liked songs of currently logged in user(JS fetch API )
 @app.route("/user_liked_songs/<string:song_id>",methods=["GET"])
+@check_loggedIn_jwt_expiration
 def check_liked_songs(song_id):
     decoded_token = jwt.decode(request.cookies.get('token'), app.config['SECRET_KEY'], algorithms=['HS256'])
     user_id=Users.query.filter(Users.user_name == decoded_token.get("username")).first().user_id
@@ -802,6 +755,7 @@ def check_liked_songs(song_id):
 
 # For user to add a song to liked list(JS fetch API )
 @app.route("/song_like/<string:song_id>/<string:check>",methods=['GET'])
+@check_loggedIn_jwt_expiration
 def like_song(song_id,check):
     decoded_token = jwt.decode(request.cookies.get('token'), app.config['SECRET_KEY'], algorithms=['HS256'])
     user_id=Users.query.filter(Users.user_name == decoded_token.get("username")).first().user_id
@@ -845,6 +799,7 @@ def like_song(song_id,check):
 
 # To attach a song to music playing bar on clicking the play-button of the song card(XMLHttpRequest API) 
 @app.route("/add_song_queue/<string:song_name>")
+@check_loggedIn_jwt_expiration
 def add_song_queue(song_name):
     song = Songs.query.filter(Songs.song_name == song_name).first()
     song.song_views+=1
@@ -866,6 +821,7 @@ def add_song_queue(song_name):
 
 # Count the likes of a song in create page(JS fetch API )
 @app.route("/song_likes_count/<string:song_id>",methods=['GET'])
+# @check_loggedIn_jwt_expiration
 def song_likes_count(song_id):
     data={}
     # print(User_likes_ratings.query.filter_by(song_id = song_id))
@@ -876,6 +832,7 @@ def song_likes_count(song_id):
 
 # Average rating of a song in create page(JS fetch API )
 @app.route("/song_avg_rating/<string:song_id>",methods=['GET'])
+# @check_loggedIn_jwt_expiration
 def song_avg_rating(song_id):
     data={}
     song_ratings=User_likes_ratings.query.filter(User_likes_ratings.song_id == song_id).all()
@@ -892,6 +849,7 @@ def song_avg_rating(song_id):
 
 # For search in index page (JS AJAX API) 
 @app.route("/search_albums_playlists",methods=['GET'])
+# @check_loggedIn_jwt_expiration
 def search():
     data={}
     data["playlist_names_lst"]=[]
@@ -1130,16 +1088,6 @@ def admin_album_delete():
         db.session.delete(album)
         db.session.commit()
     return render_template('redirect.html' , message="Album deleted . Songs of the album also deleted . If any user-playlists contain these song then the songs will be deleted from those playlists also . Redirecting you to the Admin Home page in 3 seconds ." , redirect_url='/admin_index')
-    # return f"""<html>
-    #                         <head>
-                                
-    #                             <meta http-equiv="refresh" content="5;url=/admin_index" />
-    #                         </head>
-    #                         <body>
-    #                             <h2> <span style="color:crimson;text-align:center;"> Album deleted . Songs of the album also deleted . If any user-playlists contain these song then the songs will be deleted from those playlists also .  </span></h2>
-    #                             <h4><span style="color:crimson;text-align:center;"> Redirecting you to the Admin Home page in 5 seconds . </span></h4>
-    #                         </body>
-    #                         </html>"""
 
       
 
