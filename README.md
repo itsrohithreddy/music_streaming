@@ -42,6 +42,7 @@ Follow the steps below to set up and run the Music Streaming Web Application on 
 
 3. Run the db.py file by navigating to `code` directory . This initializes the database with the tables required:
    ```bash
+   cd code
    python db.py
    ```
 
