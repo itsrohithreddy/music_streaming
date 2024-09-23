@@ -33,7 +33,6 @@ with open('C:\ONE DRIVE ROHITH\OneDrive\Documents\music_streaming\code\paths.jso
 
 with open(paths['secret']) as config_file2:
      secrets = json.load(config_file2)
-app.secret_key = secrets['google_secret']   #For Google OAuth
 app.config['SECRET_KEY'] = secrets['jwtwebtoken_secret']   #For JWT Token
 
 
@@ -156,8 +155,8 @@ def check_loggedIn_jwt_expiration(f):
             return jsonify({"message": "Token is missing!"}), 403
 
         try:
-            # Decode the token
-            
+            # Simply trying Decode the token is enough here
+            # If the token expires then bolow line throws exception `jwt.ExpiredSignatureError` 
             decoded_token = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
             return f(*args, **kwargs)
             # elif decoded_token.get("loggedIn") == 0:
