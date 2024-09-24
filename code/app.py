@@ -19,6 +19,8 @@ from io import BytesIO
 from authlib.integrations.flask_client import OAuth
 
 
+from flask import g
+import secrets
 
 current_dir=os.path.abspath(os.path.dirname(__file__))
 app=Flask(__name__)
@@ -33,7 +35,7 @@ with open('C:\ONE DRIVE ROHITH\OneDrive\Documents\music_streaming\code\paths.jso
 
 with open(paths['secret']) as config_file2:
      secrets = json.load(config_file2)
-app.config['SECRET_KEY'] = secrets['jwtwebtoken_secret']   #For JWT Token
+app.config['SECRET_KEY'] = secrets['jwtwebtoken_secret']   #For JWT Token and Flask session signing
 
 
 
@@ -73,6 +75,18 @@ def decodeutf8(value):
     decoded_value = value.decode('utf-8')
     return decoded_value
 app.jinja_env.filters['decodeutf8'] = decodeutf8
+
+
+
+
+def generate_csrf_token():
+    if 'csrf_token' not in session:
+        session['csrf_token'] = secrets.token_hex(32)
+    return session['csrf_token']
+
+@app.context_processor
+def inject_csrf_token():
+    return {'csrf_token': generate_csrf_token()}
 
 
 
@@ -166,6 +180,7 @@ def check_loggedIn_jwt_expiration(f):
 
         except jwt.ExpiredSignatureError:
             # If token has expired (based on 'exp' claim)
+            inject_csrf_token()
             session.pop('google_token', None)
             response = make_response(redirect("/"))
             response.set_cookie('token', '',expires=0)  # Clear the token cookie
@@ -232,6 +247,7 @@ def login():
 @app.route('/logout')
 @check_loggedIn_jwt_expiration
 def logout():
+    inject_csrf_token()
     session.pop('google_token', None)
     decoded_token = jwt.decode(request.cookies.get('token'), app.config['SECRET_KEY'], algorithms=['HS256'])
     decoded_token["loggedIn"] = "0"
@@ -270,7 +286,7 @@ def authorized():
     name = user_data.get('name')
     picture = user_data.get('picture')
     user_check=Users.query.filter(Users.user_name == username_mailid).first()
-
+    inject_csrf_token()
     if user_check:
         try:
             user_check.user_name = username_mailid
