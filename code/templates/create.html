@@ -195,7 +195,7 @@
               </div>
           </div>
 
-
+          <meta name="csrf-token" content="{{ csrf_token }}">
 
           <!-- Modal for edit song in the album -->
           <div id="myModal_edit-button" class="modal" style="position:fixed;top:15%;left:30%;width: 70%;height : 80%;max-width:500px;">
@@ -269,16 +269,21 @@
               for(const likes of likes_span){
                   // like_icon.classList.add("")
                   let song_id=likes.dataset.song_id;
-                  fetch("/song_likes_count/"+song_id).then(
-                          response => {
+                  fetch("/song_likes_count/"+song_id,{
+                    method: 'GET', // You can also specify other methods like POST if needed
+                    headers: {
+                      'Content-Type': 'application/json', // Set the content type if needed
+                      'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content') // Include the CSRF token here
+                    }
+                  }).then(response => {
                               // console.log("Full Response : ",response);
                               // console.log("Status code : ",response.status);
                               // console.log("Content-Type:", response.headers.get('Content-Type'));
                               
                               return response.json();
                               //return response.text();
-                          }
-                  )
+                          
+                  })
                   .then(data => {
                       // console.log("Response Text:", responseText);
                       // const data = JSON.parse(responseText);
@@ -298,8 +303,13 @@
               for(const rating of avgRating_span){
                   // like_icon.classList.add("")
                   let song_id=rating.dataset.song_id;
-                  fetch("/song_avg_rating/"+song_id).then(
-                          response => {
+                  fetch("/song_avg_rating/"+song_id,{
+                    method: 'GET', // You can also specify other methods like POST if needed
+                    headers: {
+                      'Content-Type': 'application/json', // Set the content type if needed
+                      'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content') // Include the CSRF token here
+                    }
+                  }).then(response => {
                               // console.log("Full Response : ",response);
                               // console.log("Status code : ",response.status);
                               // console.log("Content-Type:", response.headers.get('Content-Type'));

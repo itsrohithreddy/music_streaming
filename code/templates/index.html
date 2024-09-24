@@ -155,6 +155,8 @@
     </div>
 
 
+    <meta name="csrf-token" content="{{ csrf_token }}">
+
     <!-- Music playing Bar HTML -->
     <nav class="navbar fixed-bottom navbar-light bg-light p-0">
       <div class="col-12"> 
@@ -254,12 +256,21 @@
     <script>
       var playlist_names_lst = [];
       var album_names_lst = [];
+      // if("{{ loggedIn_status }}" == "0"){
+      //       event.preventDefault();
+      //       alert('Please log in to access this page .Now you will be redirected to signin page..........');
+      //       window.location.href='/signin';
+      //       // alert("clicked")
+      // }
       $(document).ready(function () {
           // Perform AJAX request
           $.ajax({
               type: "GET",
               url: "/search_albums_playlists",
               dataType: "json",
+              // beforeSend: function (xhr) {
+              //   xhr.setRequestHeader('X-CSRF-Token', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
+              // },
               success: function (data) {
                   playlist_names_lst = data["playlist_names_lst"];
                   album_names_lst = data["album_names_lst"];
@@ -272,6 +283,12 @@
       });
 
       $("#searchInput").on("keyup", function () {
+          if("{{ loggedIn_status }}" == "0"){
+                event.preventDefault();
+                alert('Please log in to access this page .Now you will be redirected to signin page..........');
+                window.location.href='/signin';
+                // alert("clicked")
+          }
           let query = $(this).val();
           if(query===""){
             displayResults([])
@@ -481,8 +498,8 @@
         // console.log(element.nodeValue)/
         let request = '/add_song_queue/'+(element.childNodes[0].childNodes[0].nodeValue);
         xhttp.open('GET',request,true);
+        // xhttp.setRequestHeader('X-CSRF-Token', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
         xhttp.send(); 
-        
         
       }
 
@@ -570,7 +587,7 @@
 
 
 
-    <script>
+    <!-- <script>
         if(document.cookie == "") {
             let loggedIn = "0";
             let role = "none";
@@ -582,6 +599,6 @@
             document.cookie = "admin="+admin
             document.cookie = "admin_u="+admin_u
         }
-    </script>
+    </script> -->
   </body>
 </html>

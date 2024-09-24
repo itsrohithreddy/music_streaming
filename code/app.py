@@ -34,8 +34,8 @@ with open('C:\ONE DRIVE ROHITH\OneDrive\Documents\music_streaming\code\paths.jso
 
 
 with open(paths['secret']) as config_file2:
-     secrets = json.load(config_file2)
-app.config['SECRET_KEY'] = secrets['jwtwebtoken_secret']   #For JWT Token and Flask session signing
+     secrets_ = json.load(config_file2)
+app.config['SECRET_KEY'] = secrets_['jwtwebtoken_secret']   #For JWT Token and Flask session signing
 
 
 
@@ -80,8 +80,7 @@ app.jinja_env.filters['decodeutf8'] = decodeutf8
 
 
 def generate_csrf_token():
-    if 'csrf_token' not in session:
-        session['csrf_token'] = secrets.token_hex(32)
+    session['csrf_token'] = secrets.token_hex(32)
     return session['csrf_token']
 
 @app.context_processor
@@ -169,7 +168,7 @@ def check_loggedIn_jwt_expiration(f):
             return jsonify({"message": "Token is missing!"}), 403
 
         try:
-            # Simply trying Decode the token is enough here
+            # Simply trying to Decode the token is enough here
             # If the token expires then bolow line throws exception `jwt.ExpiredSignatureError` 
             decoded_token = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
             return f(*args, **kwargs)
@@ -180,7 +179,9 @@ def check_loggedIn_jwt_expiration(f):
 
         except jwt.ExpiredSignatureError:
             # If token has expired (based on 'exp' claim)
+            # print("Expired and changed...................")
             inject_csrf_token()
+            # print("CSRF Token : ",session.get('csrf_token'))
             session.pop('google_token', None)
             response = make_response(redirect("/"))
             response.set_cookie('token', '',expires=0)  # Clear the token cookie
@@ -194,6 +195,20 @@ def check_loggedIn_jwt_expiration(f):
     return decorated_function
 
 
+
+# Custom CSRF protection decorator
+def csrf_protect(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        csrf_token = request.headers.get('X-CSRF-Token')
+        
+        if not csrf_token or csrf_token != session.get('csrf_token'):
+            abort(403, description="Invalid or missing CSRF token")
+        # print("CSRF Token : ",session.get('csrf_token'))
+        # print("checked")
+        return f(*args, **kwargs)
+    
+    return decorated_function
 
 
 
@@ -814,6 +829,7 @@ def like_song(song_id,check):
 
 # To attach a song to music playing bar on clicking the play-button of the song card(XMLHttpRequest API) 
 @app.route("/add_song_queue/<string:song_name>")
+# @csrf_protect
 @check_loggedIn_jwt_expiration
 def add_song_queue(song_name):
     song = Songs.query.filter(Songs.song_name == song_name).first()
@@ -836,7 +852,8 @@ def add_song_queue(song_name):
 
 # Count the likes of a song in create page(JS fetch API )
 @app.route("/song_likes_count/<string:song_id>",methods=['GET'])
-# @check_loggedIn_jwt_expiration
+@csrf_protect
+@check_loggedIn_jwt_expiration
 def song_likes_count(song_id):
     data={}
     # print(User_likes_ratings.query.filter_by(song_id = song_id))
@@ -847,7 +864,8 @@ def song_likes_count(song_id):
 
 # Average rating of a song in create page(JS fetch API )
 @app.route("/song_avg_rating/<string:song_id>",methods=['GET'])
-# @check_loggedIn_jwt_expiration
+@csrf_protect
+@check_loggedIn_jwt_expiration
 def song_avg_rating(song_id):
     data={}
     song_ratings=User_likes_ratings.query.filter(User_likes_ratings.song_id == song_id).all()
@@ -864,7 +882,8 @@ def song_avg_rating(song_id):
 
 # For search in index page (JS AJAX API) 
 @app.route("/search_albums_playlists",methods=['GET'])
-# @check_loggedIn_jwt_expiration
+# @csrf_protect
+@check_loggedIn_jwt_expiration
 def search():
     data={}
     data["playlist_names_lst"]=[]
